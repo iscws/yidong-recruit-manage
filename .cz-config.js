@@ -1,26 +1,40 @@
 'use strict';
 module.exports = {
   types: [
-    { value: '✨新增', name: '新增:    新的内容' },
-    { value: '🐛修复', name: '修复:    修复一个Bug' },
-    { value: '📝文档', name: '文档:    变更的只有文档' },
-    { value: '💄格式', name: '格式:    空格, 分号等格式修复' },
-    { value: '♻️重构', name: '重构:    代码重构，注意和特性、修复区分开' },
-    { value: '⚡️性能', name: '性能:    提升性能' },
-    { value: '✅测试', name: '测试:    添加一个测试' },
-    { value: '🔧工具', name: '工具:    开发工具变动(构建、脚手架工具等)' },
-    { value: '⏪回滚', name: '回滚:    代码回退' }
+    { value: 'feat', name: 'feat：增加了新功能' },
+    { value: 'fix', name: 'fix：修复bug' },
+    { value: 'docs', name: 'docs：只改动了文档相关的内容' },
+    {
+      value: 'style',
+      name: 'style：与代码逻辑无关的改动，例如删除空格、改变缩进、增删分号等'
+    },
+    { value: 'refactor', name: 'refactor：代码重构，与bug修复和新功能无关' },
+    { value: 'perf', name: 'perf：优化相关，比如提升性能、体验' },
+    { value: 'test', name: 'test：测试用例，包括单元测试、集成测试等' },
+    { value: 'chore', name: 'chore：改变构建流程、或者增加依赖库、工具等' },
+    { value: 'revert', name: 'revert：版本回滚' }
   ],
+
   scopes: [
     { name: 'leetcode' },
     { name: 'javascript' },
     { name: 'typescript' },
-    { name: 'Vue' },
+    { name: 'React' },
     { name: 'node' }
   ],
+  // it needs to match the value for field type. Eg.: 'fix'
+  /*  scopeOverrides: {
+    fix: [
+      {name: 'merge'},
+      {name: 'style'},
+      {name: 'e2eTest'},
+      {name: 'unitTest'}
+    ]
+  },  */
+  // override the messages, defaults are as follows
   messages: {
     type: '选择一种你的提交类型:',
-    scope: '选择一个scope (可选):',
+    scope: '请填写scope (可选):',
     // used if allowCustomScopes is true
     customScope: 'Denote the SCOPE of this change:',
     subject: '短说明:\n',
