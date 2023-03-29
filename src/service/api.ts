@@ -12,3 +12,10 @@ export function login(props: LoginProps) {
     params: props
   });
 }
+
+// 获取报名情况
+export function getEnrollData(direction: number) {
+  return erequest.get({
+    url: `/api/admin/orderBy/${direction}`
+  });
+}

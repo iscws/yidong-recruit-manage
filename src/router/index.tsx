@@ -1,14 +1,16 @@
 import React, { lazy } from 'react';
-import { Navigate } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import type { RouteObject } from 'react-router-dom';
+import withAuth from '@/hoc/withRouter';
 
-const Home = lazy(() => import('@/views/home'));
-const Login = lazy(() => import('@/views/login'));
+// 让home组件添加是否校验登录的hoc
+const Home = withAuth(lazy(() => import('@/views/home')));
+const Login = withAuth(lazy(() => import('@/views/login')));
 
 const routes: RouteObject[] = [
   {
     path: '/',
-    element: <Navigate to="/Login" />
+    element: <Navigate to="/home" />
   },
   {
     path: '/home',
@@ -20,4 +22,4 @@ const routes: RouteObject[] = [
   }
 ];
 
-export default routes;
+export default createBrowserRouter(routes);

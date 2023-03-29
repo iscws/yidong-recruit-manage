@@ -3,6 +3,7 @@ import type { FC, ReactNode } from 'react';
 import { login } from '@/service/api';
 import styled from 'styled-components';
 import { Button, Checkbox, Form, Input, message } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginProps {
   children?: ReactNode;
@@ -31,6 +32,7 @@ const LoginWraaper = styled['div']`
 `;
 
 const Login: FC<LoginProps> = () => {
+  const navigate = useNavigate();
   const onFinish = (values: any) => {
     login(values).then((res) => {
       const { message: mes, data, code } = res;
@@ -39,6 +41,9 @@ const Login: FC<LoginProps> = () => {
       if (code === 200) {
         message.success('登录成功');
         window.localStorage.setItem('token', data);
+        setTimeout(() => {
+          navigate('/home');
+        }, 2000);
       } else {
         message.error(mes);
       }

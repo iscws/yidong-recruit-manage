@@ -1,6 +1,6 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig } from 'axios';
-import type { eAxiosResponse } from './type';
+import type { eAxiosResponse } from '../request/type';
 class ERequest {
   instance: AxiosInstance;
   constructor(config: AxiosRequestConfig) {
@@ -8,7 +8,13 @@ class ERequest {
 
     this.instance.interceptors.request.use(
       (config) => {
-        // console.log('拦截成功');
+        if (localStorage.getItem('token') !== null) {
+          const token = localStorage.getItem('token') as string;
+          config.headers['token'] = `${token}`;
+        } else {
+          console.log('删除 token 了');
+          delete config.headers['Authorization'];
+        }
         return config;
       },
       (err) => {

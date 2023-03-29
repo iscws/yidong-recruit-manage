@@ -1,5 +1,5 @@
-import { BASE_URL, TIME_OUT } from './config';
-import Request from './request';
+import { BASE_URL, TIME_OUT } from './config/config';
+import Request from './request/request';
 
 const erequest = new Request({
   baseURL: BASE_URL,
