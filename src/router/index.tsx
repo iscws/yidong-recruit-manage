@@ -6,6 +6,7 @@ import withAuth from '@/hoc/withRouter';
 // 让home组件添加是否校验登录的hoc
 const Home = withAuth(lazy(() => import('@/views/home')));
 const Login = withAuth(lazy(() => import('@/views/login')));
+const Detail = withAuth(lazy(() => import('@/views/detail')));
 
 const routes: RouteObject[] = [
   {
@@ -19,6 +20,10 @@ const routes: RouteObject[] = [
   {
     path: '/login',
     element: <Login />
+  },
+  {
+    path: '/detail',
+    element: <Detail />
   }
 ];
 
