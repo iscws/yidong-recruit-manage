@@ -9,7 +9,7 @@ export const HomeWrapper = styled.div`
     justify-content: center;
 
     img {
-      height: 40px;
+      width: 70%;
     }
   }
 `;

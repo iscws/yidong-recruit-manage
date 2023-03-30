@@ -9,10 +9,15 @@ class Request {
     this.instance = axios.create(config);
 
     this.instance.interceptors.request.use(
-      (res: InternalAxiosRequestConfig) => {
-        console.log('全局拦截器');
-
-        return res;
+      (config: InternalAxiosRequestConfig) => {
+        if (localStorage.getItem('token') !== null) {
+          const token = localStorage.getItem('token') as string;
+          config.headers['token'] = `${token}`;
+        } else {
+          console.log('删除 token 了');
+          delete config.headers['Authorization'];
+        }
+        return config;
       },
       (err: AxiosResponse) => {
         return err;

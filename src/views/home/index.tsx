@@ -30,9 +30,6 @@ const items: MenuItem[] = [
 const Home: React.FC<basicHomeProps> = () => {
   const { Content, Sider } = Layout;
   const [collapsed, setCollapsed] = useState(false);
-  axios.get(`https://www.yidongmall.cn/api/recruit/college`).then((res) => {
-    console.log(res);
-  });
   const [innerData, setInnerData] = useState<infoDataType>({
     type: 'enroll',
     direction: 1

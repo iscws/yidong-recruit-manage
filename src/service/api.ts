@@ -1,13 +1,8 @@
-import erequest from '.';
-
-type LoginProps = {
-  username: string;
-  password: string;
-  remember?: boolean;
-};
+import { LoginProps } from '@/type/user';
+import request from '.';
 
 export function login(props: LoginProps) {
-  return erequest.post({
+  return request.post({
     url: '/api/admin/login/pw',
     params: props
   });
@@ -15,7 +10,7 @@ export function login(props: LoginProps) {
 
 // 获取报名情况
 export function getEnrollData(direction: number) {
-  return erequest.get({
+  return request.get({
     url: `/api/admin/orderBy/${direction}`
   });
 }

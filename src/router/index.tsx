@@ -22,7 +22,7 @@ const routes: RouteObject[] = [
     element: <Login />
   },
   {
-    path: '/detail',
+    path: '/detail/:id?',
     element: <Detail />
   }
 ];
