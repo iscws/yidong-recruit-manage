@@ -1,8 +1,9 @@
 import React, { useCallback } from 'react';
 import type { FC, ReactNode } from 'react';
 import { columns, userEnrollType } from '@/type/user';
-import { Button, Table } from 'antd';
+import { Button, Form, Input, Table } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { EnrollWrapper } from './style';
 
 interface LayoutEnrollProps {
   children?: ReactNode;
@@ -17,10 +18,31 @@ const LayoutEnroll: FC<LayoutEnrollProps> = ({ infoData, reflashData }) => {
   const toUserDetail = useCallback((record: userEnrollType) => {
     navigate(`/detail/${record.id}`);
   }, []);
+  const searchFinish = (value: any) => {
+    console.log(value);
+  };
   return (
-    <div>
-      <div className="area" style={{ textAlign: 'right', margin: '20px' }}>
-        <Button onClick={reflashData}>刷新数据</Button>
+    <EnrollWrapper>
+      <div className="area">
+        <div className="search">
+          <Form className="search-form" onFinish={searchFinish}>
+            <Form.Item
+              name="username"
+              rules={[{ required: true, message: '请至少输入一个字' }]}
+            >
+              <Input placeholder="请输入姓名"></Input>
+            </Form.Item>
+
+            <Form.Item>
+              <Button type="primary" htmlType="submit" className="submit-btn">
+                搜索
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
+        <div className="btn">
+          <Button onClick={reflashData}>刷新数据</Button>
+        </div>
       </div>
       <Table
         columns={columns}
@@ -36,7 +58,7 @@ const LayoutEnroll: FC<LayoutEnrollProps> = ({ infoData, reflashData }) => {
           };
         }}
       />
-    </div>
+    </EnrollWrapper>
   );
 };
 

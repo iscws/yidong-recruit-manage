@@ -41,9 +41,7 @@ const Login: FC<LoginProps> = () => {
       if (code === 200) {
         message.success('登录成功');
         window.localStorage.setItem('token', data);
-        setTimeout(() => {
-          navigate('/home');
-        }, 2000);
+        navigate('/home');
       } else {
         message.error(mes);
       }
