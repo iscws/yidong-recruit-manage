@@ -1,23 +1,20 @@
-import axios from 'axios';
+import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import type { AxiosInstance, AxiosRequestConfig } from 'axios';
-import type { eAxiosResponse } from '../request/type';
-class ERequest {
+import type { eAxiosResponse } from './type';
+class Request {
+  // axios 实例
   instance: AxiosInstance;
+
   constructor(config: AxiosRequestConfig) {
     this.instance = axios.create(config);
 
     this.instance.interceptors.request.use(
-      (config) => {
-        if (localStorage.getItem('token') !== null) {
-          const token = localStorage.getItem('token') as string;
-          config.headers['token'] = `${token}`;
-        } else {
-          console.log('删除 token 了');
-          delete config.headers['Authorization'];
-        }
-        return config;
+      (res: InternalAxiosRequestConfig) => {
+        console.log('全局拦截器');
+
+        return res;
       },
-      (err) => {
+      (err: AxiosResponse) => {
         return err;
       }
     );
@@ -33,9 +30,8 @@ class ERequest {
   }
 
   request<T = eAxiosResponse>(config: AxiosRequestConfig) {
-    return this.instance.request<any, T>({ ...config });
+    return this.instance.request<any, T>(config);
   }
-
   get(config: AxiosRequestConfig) {
     return this.request({ ...config, method: 'GET' });
   }
@@ -47,4 +43,4 @@ class ERequest {
   }
 }
 
-export default ERequest;
+export default Request;

@@ -8,6 +8,7 @@ import LayoutData from '@/components/layout-data';
 import { HomeWrapper } from './style';
 import { getItem, substrNum } from '@/utils';
 import type { infoDataType } from '@/type/user';
+import axios from 'axios';
 
 export interface basicHomeProps {
   children?: ReactNode;
@@ -29,6 +30,9 @@ const items: MenuItem[] = [
 const Home: React.FC<basicHomeProps> = () => {
   const { Content, Sider } = Layout;
   const [collapsed, setCollapsed] = useState(false);
+  axios.get(`https://www.yidongmall.cn/api/recruit/college`).then((res) => {
+    console.log(res);
+  });
   const [innerData, setInnerData] = useState<infoDataType>({
     type: 'enroll',
     direction: 1
