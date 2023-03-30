@@ -37,14 +37,14 @@ class Request {
   request<T = eAxiosResponse>(config: AxiosRequestConfig) {
     return this.instance.request<any, T>(config);
   }
-  get(config: AxiosRequestConfig) {
-    return this.request({ ...config, method: 'GET' });
+  get<T = eAxiosResponse>(config: AxiosRequestConfig) {
+    return this.request<T>({ ...config, method: 'GET' });
   }
-  post(config: AxiosRequestConfig) {
-    return this.request({ ...config, method: 'POST' });
+  post<T = eAxiosResponse>(config: AxiosRequestConfig) {
+    return this.request<T>({ ...config, method: 'POST' });
   }
-  delete(config: AxiosRequestConfig) {
-    return this.request({ ...config, method: 'DELETE' });
+  delete<T = eAxiosResponse>(config: AxiosRequestConfig) {
+    return this.request<T>({ ...config, method: 'DELETE' });
   }
 }
 
