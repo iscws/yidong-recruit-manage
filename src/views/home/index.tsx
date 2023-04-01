@@ -50,6 +50,14 @@ const Home: React.FC<basicHomeProps> = () => {
           collapsible
           collapsed={collapsed}
           onCollapse={(value) => setCollapsed(value)}
+          style={{
+            overflow: 'auto',
+            height: '100vh',
+            position: 'fixed',
+            left: 0,
+            top: 0,
+            bottom: 0
+          }}
         >
           <div className="logo-area">
             <img src={require('@/assets/img/logo.png')} className="logo" />
@@ -65,8 +73,10 @@ const Home: React.FC<basicHomeProps> = () => {
           />
         </Sider>
         <Layout className="site-layout">
-          <Content style={{ margin: '0 16px' }}>
-            <LayoutData infoData={innerData} />
+          <Content>
+            <div style={{ marginLeft: 220, textAlign: 'center' }}>
+              <LayoutData infoData={innerData} />
+            </div>
           </Content>
         </Layout>
       </Layout>
