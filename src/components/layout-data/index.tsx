@@ -3,9 +3,9 @@ import type { FC, ReactNode } from 'react';
 // import { getEnrollData } from '@/service/api';
 // import { Input, Table } from 'antd';
 // import type { ColumnsType } from 'antd/es/table';
-import type { infoDataType, userEnrollType } from '@/type';
+import type { infoDataType, interviewTime, userEnrollType } from '@/type';
 import { LayoutWrapper } from './styled';
-import { getEnrollData } from '@/service/api';
+import { getEnrollData, getInterviewTime } from '@/service/api';
 import LayoutEdit from '../layout-edit';
 import LayoutEnroll from '../layout-enroll';
 import LayoutInter from '../layout-interview';
@@ -16,12 +16,21 @@ interface IProps {
 }
 
 const LayoutData: FC<IProps> = ({ infoData: { type, direction } }) => {
-  const [showData, setShowData] = useState<userEnrollType[] | undefined>();
+  const [showData, setShowData] = useState<unknown>();
+  // 在这里统一对数据进行获取
   const fetchData = useCallback(() => {
-    type === 'enroll' &&
-      getEnrollData(direction).then((res) => {
-        setShowData(res.data);
-      });
+    switch (type) {
+      case 'enroll':
+        getEnrollData(direction).then((res) => {
+          setShowData(res.data);
+        });
+        break;
+      case 'edit':
+        getInterviewTime().then((res) => {
+          setShowData(res.data);
+        });
+        break;
+    }
   }, [type, direction]);
 
   useEffect(() => {
@@ -32,10 +41,12 @@ const LayoutData: FC<IProps> = ({ infoData: { type, direction } }) => {
     <Fragment>
       {showData !== undefined && (
         <LayoutWrapper>
-          {type === 'edit' && <LayoutEdit />}
+          {type === 'edit' && (
+            <LayoutEdit infoData={showData as interviewTime[]} />
+          )}
           {type === 'enroll' && (
             <LayoutEnroll
-              infoData={showData}
+              infoData={showData as userEnrollType[]}
               direction={direction}
               reflashData={fetchData}
             />

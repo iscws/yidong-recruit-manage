@@ -4,8 +4,9 @@ import { login } from '@/service/api';
 import styled from 'styled-components';
 import { Button, Checkbox, Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { LoginProps } from '@/type';
 
-interface LoginProps {
+interface IProps {
   children?: ReactNode;
 }
 
@@ -31,9 +32,9 @@ const LoginWraaper = styled['div']`
   }
 `;
 
-const Login: FC<LoginProps> = () => {
+const Login: FC<IProps> = () => {
   const navigate = useNavigate();
-  const onFinish = (values: any) => {
+  const onFinish = (values: LoginProps) => {
     login(values).then((res) => {
       const { message: mes, data, code } = res;
       console.log(res);
@@ -41,6 +42,9 @@ const Login: FC<LoginProps> = () => {
       if (code === 200) {
         message.success('登录成功');
         window.localStorage.setItem('token', data);
+        window.localStorage.setItem('username', values.username);
+        window.localStorage.setItem('password', values.password);
+
         navigate('/home');
       } else {
         message.error(mes);

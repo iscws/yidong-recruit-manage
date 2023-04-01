@@ -1,28 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import type { FC, ReactNode } from 'react';
-import { getInterviewTime } from '@/service/api';
 import { EditWrapper } from './style';
 import { interviewTime } from '@/type';
 import InterviewItem from '../interview-item';
+import { Button } from 'antd';
 
 interface LayoutEditProps {
   children?: ReactNode;
+  infoData: interviewTime[];
 }
 
-const LayoutEdit: FC<LayoutEditProps> = () => {
-  const [interviewData, setInterviewData] = useState<Array<interviewTime>>([]);
-  useEffect(() => {
-    getInterviewTime().then((res) => {
-      setInterviewData(res.data);
-      console.log(res.data);
-    });
-  }, []);
+const LayoutEdit: FC<LayoutEditProps> = ({ infoData = [] }) => {
   return (
     <EditWrapper>
-      {interviewData.length !== 0 &&
-        interviewData.map((item) => {
+      {infoData.length !== 0 &&
+        infoData.map((item) => {
           return <InterviewItem infoData={item} key={item.id} />;
         })}
+      <Button className="new" type="dashed">
+        新增面试时间
+      </Button>
     </EditWrapper>
   );
 };

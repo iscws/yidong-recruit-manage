@@ -28,3 +28,20 @@ export function getInterviewTime() {
     url: '/api/recruit/interview/odMgR5mbEDwXPo-FQ4aB1xvphM1s'
   });
 }
+
+export async function refreshToken() {
+  const username = window.localStorage.getItem('username') as string;
+  const password = window.localStorage.getItem('password') as string;
+
+  return login({ username, password }).then((res) => {
+    return res.data;
+  });
+}
+
+// 更改面试基本信息
+export function updateInterviewInfo(props: any) {
+  return request.post({
+    url: '/api/admin/updateTime',
+    data: props
+  });
+}

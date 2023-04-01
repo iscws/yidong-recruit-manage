@@ -8,7 +8,6 @@ import LayoutData from '@/components/layout-data';
 import { HomeWrapper } from './style';
 import { getItem, substrNum } from '@/utils';
 import type { infoDataType } from '@/type';
-import axios from 'axios';
 
 export interface basicHomeProps {
   children?: ReactNode;
@@ -31,13 +30,12 @@ const Home: React.FC<basicHomeProps> = () => {
   const { Content, Sider } = Layout;
   const [collapsed, setCollapsed] = useState(false);
   const [innerData, setInnerData] = useState<infoDataType>({
-    type: 'enroll',
-    direction: 1
+    type: 'edit',
+    direction: 0
   });
+
   // 将点击item后的值传入组件当中
   function itemClick(value: any) {
-    console.log(value);
-
     const infoData = {
       type: value.keyPath[1] || 'edit',
       direction: substrNum(value.keyPath[0]) || 0
@@ -59,11 +57,11 @@ const Home: React.FC<basicHomeProps> = () => {
 
           <Menu
             theme="dark"
-            defaultSelectedKeys={['enroll-1']}
+            defaultSelectedKeys={['edit']}
             mode="inline"
             items={items}
             onClick={itemClick}
-            defaultOpenKeys={['enroll']}
+            defaultOpenKeys={['edit']}
           />
         </Sider>
         <Layout className="site-layout">

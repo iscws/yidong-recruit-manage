@@ -68,12 +68,12 @@ export interface searchUserType {
 }
 
 export interface interviewTime {
-  id: number;
+  id?: number;
   start: string;
   end: string;
   totalQuota: string;
   location: string;
-  subscribed: boolean;
+  subscribed?: boolean;
 }
 
 // 点击搜索后返回的对象
