@@ -1,9 +1,10 @@
 import React, { useCallback } from 'react';
 import type { FC, ReactNode } from 'react';
-import { columns, userEnrollType } from '@/type/user';
+import { columns, searchType, userEnrollType } from '@/type';
 import { Button, Form, Input, Table } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { EnrollWrapper } from './style';
+import { getSearchData } from '@/service/api';
 
 interface LayoutEnrollProps {
   children?: ReactNode;
@@ -18,8 +19,10 @@ const LayoutEnroll: FC<LayoutEnrollProps> = ({ infoData, reflashData }) => {
   const toUserDetail = useCallback((record: userEnrollType) => {
     navigate(`/detail/${record.id}`);
   }, []);
-  const searchFinish = (value: any) => {
-    console.log(value);
+  const searchFinish = (value: searchType) => {
+    getSearchData(value).then((res) => {
+      console.log(res);
+    });
   };
   return (
     <EnrollWrapper>

@@ -1,4 +1,4 @@
-import { LoginProps } from '@/type/user';
+import { LoginProps, searchUserType } from '@/type';
 import request from '.';
 
 export function login(props: LoginProps) {
@@ -12,5 +12,19 @@ export function login(props: LoginProps) {
 export function getEnrollData(direction: number) {
   return request.get({
     url: `/api/admin/orderBy/${direction}`
+  });
+}
+
+export function getSearchData(params: searchUserType) {
+  return request.post({
+    url: '/api/user/getUserInfoByName',
+    data: params
+  });
+}
+
+// 获取面试时间
+export function getInterviewTime() {
+  return request.get({
+    url: '/api/recruit/interview/odMgR5mbEDwXPo-FQ4aB1xvphM1s'
   });
 }

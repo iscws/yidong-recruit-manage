@@ -62,3 +62,21 @@ export const columns: ColumnsType<userEnrollType> = [
     dataIndex: 'status'
   }
 ];
+
+export interface searchUserType {
+  username: string;
+}
+
+export interface interviewTime {
+  id: number;
+  start: string;
+  end: string;
+  totalQuota: string;
+  location: string;
+  subscribed: boolean;
+}
+
+// 点击搜索后返回的对象
+export interface searchType {
+  username: string;
+}

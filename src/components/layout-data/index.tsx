@@ -3,7 +3,7 @@ import type { FC, ReactNode } from 'react';
 // import { getEnrollData } from '@/service/api';
 // import { Input, Table } from 'antd';
 // import type { ColumnsType } from 'antd/es/table';
-import type { infoDataType, userEnrollType } from '@/type/user';
+import type { infoDataType, userEnrollType } from '@/type';
 import { LayoutWrapper } from './styled';
 import { getEnrollData } from '@/service/api';
 import LayoutEdit from '../layout-edit';
@@ -21,7 +21,6 @@ const LayoutData: FC<IProps> = ({ infoData: { type, direction } }) => {
     type === 'enroll' &&
       getEnrollData(direction).then((res) => {
         setShowData(res.data);
-        console.log(res);
       });
   }, [type, direction]);
 

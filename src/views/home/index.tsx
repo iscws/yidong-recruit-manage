@@ -7,7 +7,7 @@ import { Layout, Menu } from 'antd';
 import LayoutData from '@/components/layout-data';
 import { HomeWrapper } from './style';
 import { getItem, substrNum } from '@/utils';
-import type { infoDataType } from '@/type/user';
+import type { infoDataType } from '@/type';
 import axios from 'axios';
 
 export interface basicHomeProps {
