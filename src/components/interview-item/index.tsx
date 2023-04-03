@@ -3,6 +3,7 @@ import type { FC, ReactNode } from 'react';
 import { interviewTime } from '@/type';
 import { ItemWrapper } from './style';
 import { Button, DatePicker, Form, Input, message } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { addNewInterview, updateInterviewInfo } from '@/service/api';
 
@@ -22,8 +23,6 @@ const InterviewItem: FC<IProps> = ({ infoData }) => {
 
     // console.log(submitValue);
     if (infoData.isdefalut === true) {
-      console.log('新增新增');
-      console.log(submitValue);
       const newValue = {
         startTime: submitValue.startTime,
         endTime: submitValue.endTime,
@@ -97,6 +96,10 @@ const InterviewItem: FC<IProps> = ({ infoData }) => {
             </Button>
           </Form.Item>
         </Form>
+
+        <div className="delete">
+          <DeleteOutlined style={{ fontSize: '16px', color: 'red' }} />
+        </div>
       </div>
     </ItemWrapper>
   );

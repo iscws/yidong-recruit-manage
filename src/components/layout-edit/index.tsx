@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import type { FC, ReactNode } from 'react';
 import { EditWrapper } from './style';
 import { interviewTime } from '@/type';
@@ -9,19 +9,20 @@ import { PlusOutlined } from '@ant-design/icons';
 interface LayoutEditProps {
   children?: ReactNode;
   infoData: interviewTime[];
+  changeDataFn: (props: any) => void;
 }
 
-const LayoutEdit: FC<LayoutEditProps> = ({ infoData = [] }) => {
-  const [innerInfoData, setInnerInfoData] = useState(infoData);
-  const changeRecruitTime = (value: any) => {
+const LayoutEdit: FC<LayoutEditProps> = ({ infoData = [], changeDataFn }) => {
+  // const [infoData, setinfoData] = useState(infoData);
+
+  const changeRecruitTime = (value: { time: string }) => {
     console.log(value);
   };
 
   const newOne = () => {
-    window.scrollTo(0, document.documentElement.scrollHeight);
     const date = new Date();
-    setInnerInfoData([
-      ...innerInfoData,
+    changeDataFn([
+      ...infoData,
       {
         id: date.getTime(),
         startTime: date.toLocaleString(),
@@ -32,7 +33,11 @@ const LayoutEdit: FC<LayoutEditProps> = ({ infoData = [] }) => {
         isdefalut: true
       }
     ]);
+    setTimeout(() => {
+      window.scrollTo(0, document.documentElement.scrollHeight);
+    }, 50);
   };
+
   return (
     <EditWrapper>
       <div className="items-header">
@@ -52,8 +57,8 @@ const LayoutEdit: FC<LayoutEditProps> = ({ infoData = [] }) => {
         </Form>
       </div>
       <div className="items-area">
-        {innerInfoData.length !== 0 &&
-          innerInfoData.map((item) => {
+        {infoData.length !== 0 &&
+          infoData.map((item) => {
             return <InterviewItem infoData={item} key={item.id} />;
           })}
       </div>
