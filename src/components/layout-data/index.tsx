@@ -1,8 +1,5 @@
 import React, { Fragment, memo, useEffect, useState, useCallback } from 'react';
 import type { FC, ReactNode } from 'react';
-// import { getEnrollData } from '@/service/api';
-// import { Input, Table } from 'antd';
-// import type { ColumnsType } from 'antd/es/table';
 import type { infoDataType, interviewTime, userEnrollType } from '@/type';
 import { LayoutWrapper } from './styled';
 import { getEnrollData, getInterviewTime } from '@/service/api';
@@ -28,6 +25,7 @@ const LayoutData: FC<IProps> = ({ infoData: { type, direction } }) => {
       case 'edit':
         getInterviewTime().then((res) => {
           setShowData(res.data);
+          console.log(res.data);
         });
         break;
     }

@@ -74,7 +74,7 @@ const Home: React.FC<basicHomeProps> = () => {
         </Sider>
         <Layout className="site-layout">
           <Content>
-            <div style={{ marginLeft: 220, textAlign: 'center' }}>
+            <div style={{ margin: '0 20px 0 220px' }}>
               <LayoutData infoData={innerData} />
             </div>
           </Content>

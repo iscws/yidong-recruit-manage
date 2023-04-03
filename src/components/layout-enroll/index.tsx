@@ -47,6 +47,7 @@ const LayoutEnroll: FC<LayoutEnrollProps> = ({ infoData, reflashData }) => {
           <Button onClick={reflashData}>刷新数据</Button>
         </div>
       </div>
+      <div className="tips">双击选项进入用户详情页</div>
       <Table
         columns={columns}
         dataSource={infoData}

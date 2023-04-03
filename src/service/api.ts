@@ -1,4 +1,4 @@
-import { LoginProps, searchUserType } from '@/type';
+import { interviewTime, LoginProps, searchUserType } from '@/type';
 import request from '.';
 
 export function login(props: LoginProps) {
@@ -25,7 +25,7 @@ export function getSearchData(params: searchUserType) {
 // 获取面试时间
 export function getInterviewTime() {
   return request.get({
-    url: '/api/recruit/interview/odMgR5mbEDwXPo-FQ4aB1xvphM1s'
+    url: '/api/admin/getAllTime'
   });
 }
 
@@ -42,6 +42,14 @@ export async function refreshToken() {
 export function updateInterviewInfo(props: any) {
   return request.post({
     url: '/api/admin/updateTime',
+    data: props
+  });
+}
+
+// 新增面试时间
+export function addNewInterview(props: interviewTime) {
+  return request.post({
+    url: '/api/admin/addTime',
     data: props
   });
 }
