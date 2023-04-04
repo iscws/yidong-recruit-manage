@@ -59,3 +59,11 @@ export function deleteInterviewTime(id: number) {
     url: `/api/admin/deleteTime/${id}`
   });
 }
+
+// 获取某个用户的基本信息
+export function getUserInfoById(id: number) {
+  return request.get({
+    url: '/api/admin/getUserInfoById',
+    data: id
+  });
+}

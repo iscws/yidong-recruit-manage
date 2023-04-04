@@ -25,7 +25,7 @@ const routes: RouteObject[] = [
         element: <Navigate to={'/home/enroll/1'} />
       },
       {
-        path: '/home/edit',
+        path: '/home/edit/:direction?',
         element: <Edit />
       },
       {

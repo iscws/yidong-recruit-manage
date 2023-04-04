@@ -16,7 +16,10 @@ const MenuItems: MenuItemType[] = [
     getItem('前端', 'interview-1'),
     getItem('后端', 'interview-2')
   ]),
-  getItem('修改面试', 'edit', <FundOutlined />)
+  getItem('修改面试', 'edit', <FundOutlined />, [
+    getItem('前端', 'edit-1'),
+    getItem('后端', 'edit-2')
+  ])
 ];
 
 export interface basicHomeProps {
@@ -25,14 +28,15 @@ export interface basicHomeProps {
 const Home: React.FC<basicHomeProps> = () => {
   const { Content, Sider } = Layout;
   const [collapsed, setCollapsed] = useState(false);
+  // const {location,setLocation}
   const navigate = useNavigate();
   // 根据路径选择menu的展开项，利用split对url进行分组
   const location = useLocation().pathname.split('/');
 
   // 将点击item后的值传入组件当中
   function itemClick(value: any) {
-    const path = value.keyPath[1] || 'edit';
-    const direction = path === 'edit' ? '' : `/${substrNum(value.keyPath[0])}`;
+    const path = value.keyPath[1];
+    const direction = `/${substrNum(value.keyPath[0])}`;
 
     navigate(`/home/${path}${direction}`);
   }
@@ -51,15 +55,13 @@ const Home: React.FC<basicHomeProps> = () => {
 
           <Menu
             theme="dark"
-            defaultSelectedKeys={[
-              location[3] !== undefined
-                ? `${location[2]}-${location[3]}`
-                : 'edit'
-            ]}
             mode="inline"
             items={MenuItems}
             onClick={itemClick}
-            defaultOpenKeys={[location[2]]}
+            selectedKeys={[`${location[2]}-${location[3]}`]}
+            defaultOpenKeys={[
+              location[2] === undefined ? 'enroll' : location[2]
+            ]}
           />
         </Sider>
         <Layout className="site-layout">

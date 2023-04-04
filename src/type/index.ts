@@ -10,6 +10,8 @@ export interface userEnrollType {
   major: string;
   introduction: string;
   status: string;
+  interviewTime?: interviewTime;
+  assess?: string;
 }
 
 export type MenuItemType = Required<MenuProps>['items'][number];
@@ -67,7 +69,7 @@ export interface interviewTime {
   id?: number | string;
   startTime: string;
   endTime: string;
-  quota: string;
+  quota?: string;
   location: string;
   spareQuota?: number;
   isdefalut?: boolean;
