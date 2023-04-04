@@ -1,4 +1,4 @@
-import { MenuItem } from '@/views/home';
+import { MenuItemType } from '@/type';
 
 // 截取字符串，并将其转为数字
 export function substrNum(str: string): number {
@@ -10,12 +10,12 @@ export function getItem(
   label: React.ReactNode,
   key: React.Key,
   icon?: React.ReactNode,
-  children?: MenuItem[]
-): MenuItem {
+  children?: MenuItemType[]
+): MenuItemType {
   return {
     key,
     icon,
     children,
     label
-  } as MenuItem;
+  } as MenuItemType;
 }

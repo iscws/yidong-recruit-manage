@@ -12,4 +12,12 @@ export const HomeWrapper = styled.div`
       width: 70%;
     }
   }
+  .sliderArea {
+    overflow: auto;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+  }
 `;

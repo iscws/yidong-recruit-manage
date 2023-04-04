@@ -9,16 +9,15 @@ export function login(props: LoginProps) {
 }
 
 // 获取报名情况
-export function getEnrollData(direction: number) {
+export function getEnrollData(direction: string) {
   return request.get({
     url: `/api/admin/orderBy/${direction}`
   });
 }
 
 export function getSearchData(params: searchUserType) {
-  return request.post({
-    url: '/api/user/getUserInfoByName',
-    data: params
+  return request.get({
+    url: `/api/admin/getUserInfoByName?username=${params.username}`
   });
 }
 
@@ -39,7 +38,7 @@ export async function refreshToken() {
 }
 
 // 更改面试基本信息
-export function updateInterviewInfo(props: any) {
+export function updateInterviewInfo(props: interviewTime) {
   return request.post({
     url: '/api/admin/updateTime',
     data: props
@@ -51,5 +50,12 @@ export function addNewInterview(props: interviewTime) {
   return request.post({
     url: '/api/admin/addTime',
     data: props
+  });
+}
+
+// 删除面试时间
+export function deleteInterviewTime(id: number) {
+  return request.get({
+    url: `/api/admin/deleteTime/${id}`
   });
 }

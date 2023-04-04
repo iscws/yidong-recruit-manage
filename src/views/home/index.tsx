@@ -1,20 +1,13 @@
-import React, { ReactNode, useState } from 'react';
-
+import React, { ReactNode, Suspense, useState } from 'react';
 import { TeamOutlined, UserOutlined, FundOutlined } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
 import { Layout, Menu } from 'antd';
-
-import LayoutData from '@/components/layout-data';
 import { HomeWrapper } from './style';
 import { getItem, substrNum } from '@/utils';
-import type { infoDataType } from '@/type';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { MenuItemType } from '@/type';
 
-export interface basicHomeProps {
-  children?: ReactNode;
-}
-export type MenuItem = Required<MenuProps>['items'][number];
-
-const items: MenuItem[] = [
+// 定义菜单的item
+const MenuItems: MenuItemType[] = [
   getItem('报名情况', 'enroll', <UserOutlined />, [
     getItem('前端', 'enroll-1'),
     getItem('后端', 'enroll-2')
@@ -26,22 +19,22 @@ const items: MenuItem[] = [
   getItem('修改面试', 'edit', <FundOutlined />)
 ];
 
+export interface basicHomeProps {
+  children?: ReactNode;
+}
 const Home: React.FC<basicHomeProps> = () => {
   const { Content, Sider } = Layout;
   const [collapsed, setCollapsed] = useState(false);
-  const [innerData, setInnerData] = useState<infoDataType>({
-    type: 'edit',
-    direction: 0
-  });
+  const navigate = useNavigate();
+  // 根据路径选择menu的展开项，利用split对url进行分组
+  const location = useLocation().pathname.split('/');
 
   // 将点击item后的值传入组件当中
   function itemClick(value: any) {
-    const infoData = {
-      type: value.keyPath[1] || 'edit',
-      direction: substrNum(value.keyPath[0]) || 0
-    };
+    const path = value.keyPath[1] || 'edit';
+    const direction = path === 'edit' ? '' : `/${substrNum(value.keyPath[0])}`;
 
-    setInnerData(infoData);
+    navigate(`/home/${path}${direction}`);
   }
   return (
     <HomeWrapper>
@@ -50,14 +43,7 @@ const Home: React.FC<basicHomeProps> = () => {
           collapsible
           collapsed={collapsed}
           onCollapse={(value) => setCollapsed(value)}
-          style={{
-            overflow: 'auto',
-            height: '100vh',
-            position: 'fixed',
-            left: 0,
-            top: 0,
-            bottom: 0
-          }}
+          className="sliderArea"
         >
           <div className="logo-area">
             <img src={require('@/assets/img/logo.png')} className="logo" />
@@ -65,17 +51,23 @@ const Home: React.FC<basicHomeProps> = () => {
 
           <Menu
             theme="dark"
-            defaultSelectedKeys={['edit']}
+            defaultSelectedKeys={[
+              location[3] !== undefined
+                ? `${location[2]}-${location[3]}`
+                : 'edit'
+            ]}
             mode="inline"
-            items={items}
+            items={MenuItems}
             onClick={itemClick}
-            defaultOpenKeys={['edit']}
+            defaultOpenKeys={[location[2]]}
           />
         </Sider>
         <Layout className="site-layout">
           <Content>
-            <div style={{ margin: '0 20px 0 220px' }}>
-              <LayoutData infoData={{ ...innerData }} />
+            <div style={{ margin: '20px 20px 0 220px' }}>
+              <Suspense fallback="loading">
+                <Outlet />
+              </Suspense>
             </div>
           </Content>
         </Layout>

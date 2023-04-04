@@ -1,27 +1,40 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, memo, useState, useEffect } from 'react';
 import type { FC, ReactNode } from 'react';
 import { columns, searchType, userEnrollType } from '@/type';
 import { Button, Form, Input, Table } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { EnrollWrapper } from './style';
-import { getSearchData } from '@/service/api';
+import { getEnrollData, getSearchData } from '@/service/api';
 
 interface LayoutEnrollProps {
   children?: ReactNode;
-  infoData: userEnrollType[] | undefined;
-  direction: number;
-  reflashData: () => void;
 }
 
-const LayoutEnroll: FC<LayoutEnrollProps> = ({ infoData, reflashData }) => {
+const LayoutEnroll: FC<LayoutEnrollProps> = () => {
+  const [infoData, setInfoData] = useState<userEnrollType[]>([]);
+  const params = useParams();
   const navigate = useNavigate();
-  // 进入详情页
+
+  // 进入用户详情页
   const toUserDetail = useCallback((record: userEnrollType) => {
     navigate(`/detail/${record.id}`);
   }, []);
+
+  // 搜索
   const searchFinish = (value: searchType) => {
     getSearchData(value).then((res) => {
       console.log(res);
+      setInfoData(res.data);
+    });
+  };
+  // 更新数据
+  useEffect(() => {
+    reflashData();
+  }, [params]);
+
+  const reflashData = () => {
+    getEnrollData(params.direction as string).then((res) => {
+      setInfoData(res.data);
     });
   };
   return (
@@ -33,7 +46,7 @@ const LayoutEnroll: FC<LayoutEnrollProps> = ({ infoData, reflashData }) => {
               name="username"
               rules={[{ required: true, message: '请至少输入一个字' }]}
             >
-              <Input placeholder="请输入姓名"></Input>
+              <Input placeholder="请输入完整的姓名"></Input>
             </Form.Item>
 
             <Form.Item>
@@ -66,4 +79,4 @@ const LayoutEnroll: FC<LayoutEnrollProps> = ({ infoData, reflashData }) => {
   );
 };
 
-export default LayoutEnroll;
+export default memo(LayoutEnroll);

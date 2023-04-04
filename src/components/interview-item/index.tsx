@@ -1,11 +1,23 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import type { FC, ReactNode } from 'react';
 import { interviewTime } from '@/type';
 import { ItemWrapper } from './style';
-import { Button, DatePicker, Form, Input, message } from 'antd';
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  message,
+  Popconfirm,
+  Radio
+} from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { addNewInterview, updateInterviewInfo } from '@/service/api';
+import {
+  addNewInterview,
+  deleteInterviewTime,
+  updateInterviewInfo
+} from '@/service/api';
 
 interface IProps {
   infoData: interviewTime;
@@ -13,6 +25,18 @@ interface IProps {
 }
 
 const InterviewItem: FC<IProps> = ({ infoData }) => {
+  const [isDelete, setIsDelete] = useState(false);
+  const deleteItem = async () => {
+    if (infoData.isdefalut === undefined) {
+      const res = await deleteInterviewTime(infoData.id as number);
+      if (res.code === 200) {
+        message.success('删除成功');
+        setIsDelete(true);
+      } else {
+        message.error(res.message);
+      }
+    }
+  };
   const formSubmit = (value: any) => {
     const submitValue: interviewTime = {
       ...infoData,
@@ -36,7 +60,7 @@ const InterviewItem: FC<IProps> = ({ infoData }) => {
         if (res.code === 200) {
           message.success(res.message);
         } else {
-          message.error('发生未知错误');
+          message.error(res.message);
         }
         infoData.isdefalut = false;
       });
@@ -45,12 +69,12 @@ const InterviewItem: FC<IProps> = ({ infoData }) => {
         if (res.code === 200) {
           message.success(res.message);
         } else {
-          message.error('发生未知错误');
+          message.error(res.message);
         }
       });
     }
   };
-  return (
+  return isDelete ? null : (
     <ItemWrapper>
       <div className="inner">
         <Form name="interviewForm" onFinish={formSubmit}>
@@ -82,6 +106,18 @@ const InterviewItem: FC<IProps> = ({ infoData }) => {
           </Form.Item>
 
           <Form.Item
+            name="direction"
+            label="方向"
+            initialValue={infoData.direction}
+            rules={[{ required: true, message: '请填写方向' }]}
+          >
+            <Radio.Group>
+              <Radio value={1}> 前端 </Radio>
+              <Radio value={2}> 后端 </Radio>
+            </Radio.Group>
+          </Form.Item>
+
+          <Form.Item
             name="location"
             label="地点"
             initialValue={infoData.location}
@@ -97,9 +133,17 @@ const InterviewItem: FC<IProps> = ({ infoData }) => {
           </Form.Item>
         </Form>
 
-        <div className="delete">
-          <DeleteOutlined style={{ fontSize: '16px', color: 'red' }} />
-        </div>
+        <Popconfirm
+          title="删除面试时间"
+          description="你确定要删除这个面试时间段吗？"
+          okText="确定"
+          cancelText="取消"
+          onConfirm={deleteItem}
+        >
+          <div className="delete">
+            <DeleteOutlined style={{ fontSize: '16px', color: 'red' }} />
+          </div>
+        </Popconfirm>
       </div>
     </ItemWrapper>
   );

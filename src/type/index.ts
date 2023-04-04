@@ -1,5 +1,5 @@
+import { MenuProps } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-
 export interface userEnrollType {
   id: string;
   username: number;
@@ -12,11 +12,7 @@ export interface userEnrollType {
   status: string;
 }
 
-// 定义传递过来的数据类型
-export interface infoDataType {
-  type: 'enroll' | 'interview' | 'edit';
-  direction: number;
-}
+export type MenuItemType = Required<MenuProps>['items'][number];
 
 // 登录数据
 export type LoginProps = {
@@ -75,6 +71,7 @@ export interface interviewTime {
   location: string;
   spareQuota?: number;
   isdefalut?: boolean;
+  direction?: number;
 }
 
 // 点击搜索后返回的对象

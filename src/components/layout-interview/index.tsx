@@ -3,8 +3,6 @@ import type { FC, ReactNode } from 'react';
 
 interface LayoutInterProps {
   children?: ReactNode;
-  infoData: any;
-  change: (props: any) => void;
 }
 
 const LayoutInter: FC<LayoutInterProps> = () => {

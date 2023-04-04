@@ -21,4 +21,18 @@ export const EditWrapper = styled.div`
       justify-content: space-around;
     }
   }
+
+  .emptyArea {
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 40px;
+    width: 100%;
+    background-color: #fff;
+    .button {
+      width: 100px;
+      margin-top: 15px;
+    }
+  }
 `;

@@ -1,27 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import type { FC, ReactNode } from 'react';
 import { EditWrapper } from './style';
 import { interviewTime } from '@/type';
 import InterviewItem from '../interview-item';
-import { Button, Form, Input, FloatButton } from 'antd';
+import { Button, Form, Input, FloatButton, Empty } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import { getInterviewTime } from '@/service/api';
 
 interface LayoutEditProps {
   children?: ReactNode;
-  infoData: interviewTime[];
-  changeDataFn: (props: any) => void;
 }
 
-const LayoutEdit: FC<LayoutEditProps> = ({ infoData = [], changeDataFn }) => {
-  // const [infoData, setinfoData] = useState(infoData);
+const LayoutEdit: FC<LayoutEditProps> = () => {
+  const [infoData, setInfoData] = useState<interviewTime[]>([]);
 
-  const changeRecruitTime = (value: { time: string }) => {
-    console.log(value);
-  };
-
-  const newOne = () => {
+  // 新增面试时间
+  const addTime = useCallback(() => {
     const date = new Date();
-    changeDataFn([
+    setInfoData([
       ...infoData,
       {
         id: date.getTime(),
@@ -33,11 +29,23 @@ const LayoutEdit: FC<LayoutEditProps> = ({ infoData = [], changeDataFn }) => {
         isdefalut: true
       }
     ]);
+    // 滑动到底部;
     setTimeout(() => {
       window.scrollTo(0, document.documentElement.scrollHeight);
     }, 50);
+  }, [infoData]);
+
+  // 更改面试前预约的时间
+  const changeRecruitTime = (value: { time: string }) => {
+    console.log(value);
   };
 
+  // 获取面试数据
+  useEffect(() => {
+    getInterviewTime().then((res) => {
+      setInfoData(res.data);
+    });
+  }, []);
   return (
     <EditWrapper>
       <div className="items-header">
@@ -57,18 +65,33 @@ const LayoutEdit: FC<LayoutEditProps> = ({ infoData = [], changeDataFn }) => {
         </Form>
       </div>
       <div className="items-area">
-        {infoData.length !== 0 &&
+        {infoData.length !== 0 ? (
           infoData.map((item) => {
             return <InterviewItem infoData={item} key={item.id} />;
-          })}
+          })
+        ) : (
+          <div className="emptyArea">
+            <Empty
+              imageStyle={{ height: 120 }}
+              description={
+                <span style={{ color: '#94979e' }}>什么都没有~</span>
+              }
+            >
+              <Button type="primary" onClick={addTime}>
+                添加面试时间
+              </Button>
+            </Empty>
+          </div>
+        )}
       </div>
+
       <div className="items-tips">
         <FloatButton
           type="primary"
           style={{ right: 24 }}
           icon={<PlusOutlined />}
           tooltip={<div>新增面试时间</div>}
-          onClick={newOne}
+          onClick={addTime}
         />
       </div>
     </EditWrapper>
