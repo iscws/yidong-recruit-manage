@@ -24,4 +24,4 @@ jobs:
           github_token: ${{ secrets.PRESS_TOKEN }}
           branch: build
           force: true
-          directory: ./build
+          directory: build/
