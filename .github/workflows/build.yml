@@ -1,27 +1,35 @@
-name: Push build folder to build branch
+name: Upload Build artifacts to build branch
 
+# 触发条件：当 main 分支有新的 commit 提交时
 on:
   push:
     branches:
       - main
 
 jobs:
-  push_build_folder:
+  # 构建和上传任务
+  build-and-upload:
+    # 运行在 Ubuntu 环境
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      # 检查源代码
+      - name: checkout source code
         uses: actions/checkout@v2
 
-      - name: Install Dependencies
+      # 安装依赖
+      - name: install dependencies
         run: npm install
 
-      - name: Build Project
+      # 编译产品
+      - name: build
         run: npm run build
 
-      - name: Push build folder to build branch
+      # 推送产品到 build 分支
+      - name: push build artifacts
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.PRESS_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: build
           force: true
-          directory: build/
+          directory: ./build # 将 build 目录作为工作区
