@@ -6,6 +6,7 @@ export const EnrollWrapper = styled.div`
     display: flex;
     justify-content: space-between;
     height: 30px;
+    margin-bottom: 30px;
     .search-form {
       display: flex;
 

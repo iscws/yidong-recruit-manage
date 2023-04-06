@@ -1,10 +1,11 @@
 import React, { useCallback, memo, useState, useEffect } from 'react';
 import type { FC, ReactNode } from 'react';
-import { columns, searchType, userEnrollType } from '@/type';
+import { searchType, userEnrollType } from '@/type';
 import { Button, Form, Input, Table } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 import { EnrollWrapper } from './style';
 import { getEnrollData, getSearchData } from '@/service/api';
+import { ColumnsType } from 'antd/es/table';
 
 interface LayoutEnrollProps {
   children?: ReactNode;
@@ -27,6 +28,56 @@ const LayoutEnroll: FC<LayoutEnrollProps> = () => {
       setInfoData(res.data);
     });
   };
+
+  const columns: ColumnsType<userEnrollType> = [
+    {
+      title: '名字',
+      dataIndex: 'username',
+      key: 'username'
+    },
+    {
+      title: '性别',
+      key: 'sex',
+      dataIndex: 'sex'
+    },
+    {
+      title: '学号',
+      key: 'studentId',
+      dataIndex: 'studentId'
+    },
+    {
+      title: '手机号码',
+      key: 'phone',
+      dataIndex: 'phone'
+    },
+    {
+      title: '学院',
+      key: 'college',
+      dataIndex: 'college'
+    },
+    {
+      title: '专业',
+      key: 'major',
+      dataIndex: 'major'
+    },
+    {
+      title: '状态',
+      key: 'status',
+      dataIndex: 'status'
+    },
+    {
+      title: '进入详情',
+      key: 'index',
+      render: (record: userEnrollType) => {
+        console.log(record);
+        return (
+          <Button onClick={() => toUserDetail(record)} type="primary">
+            进入详情
+          </Button>
+        );
+      }
+    }
+  ];
   // 更新数据
   useEffect(() => {
     reflashData();
@@ -60,21 +111,7 @@ const LayoutEnroll: FC<LayoutEnrollProps> = () => {
           <Button onClick={reflashData}>刷新数据</Button>
         </div>
       </div>
-      <div className="tips">双击选项进入用户详情页</div>
-      <Table
-        columns={columns}
-        dataSource={infoData}
-        rowKey="id"
-        onRow={(record) => {
-          return {
-            onDoubleClick: () => {
-              console.log('record:', record);
-
-              toUserDetail(record);
-            }
-          };
-        }}
-      />
+      <Table columns={columns} dataSource={infoData} rowKey="id" />
     </EnrollWrapper>
   );
 };
