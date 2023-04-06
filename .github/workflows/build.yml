@@ -1,35 +1,32 @@
-name: Upload Build artifacts to build branch
+name: Build and Deploy to Build Branch
 
-# 触发条件：当 main 分支有新的 commit 提交时
 on:
   push:
     branches:
       - main
 
 jobs:
-  # 构建和上传任务
-  build-and-upload:
-    # 运行在 Ubuntu 环境
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      # 检查源代码
-      - name: checkout source code
+      - name: Checkout Repo
+
         uses: actions/checkout@v2
 
-      # 安装依赖
-      - name: install dependencies
+      - name: Install Dependencies
+
         run: npm install
 
-      # 编译产品
-      - name: build
+      - name: Build Production Code
+
         run: npm run build
 
-      # 推送产品到 build 分支
-      - name: push build artifacts
-        uses: ad-m/github-push-action@master
+      - name: Deploy to Build Branch
+
+        uses: peaceiris/actions-gh-pages@v3
+
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: build
-          force: true
-          directory: ./build # 将 build 目录作为工作区
+          publish_branch: build
+          publish_dir: ./build
