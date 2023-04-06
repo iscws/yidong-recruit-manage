@@ -1,7 +1,9 @@
-import React, { lazy } from 'react';
+import React, { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
+import type { ReactNode } from 'react';
 import type { RouteObject } from 'react-router-dom';
 import withAuth from '@/hoc/withRouter';
+import { Skeleton } from 'antd';
 
 // 让home组件添加是否校验登录的hoc
 const Home = withAuth(lazy(() => import('@/views/home')));
@@ -10,7 +12,13 @@ const Detail = withAuth(lazy(() => import('@/views/detail')));
 const Edit = withAuth(lazy(() => import('@/components/layout-edit')));
 const Enroll = withAuth(lazy(() => import('@/components/layout-enroll')));
 const Interview = withAuth(lazy(() => import('@/components/layout-interview')));
-
+const LazyLoad = (children: ReactNode) => {
+  return (
+    <Suspense fallback={<Skeleton active style={{ marginTop: '25px' }} />}>
+      {children}
+    </Suspense>
+  );
+};
 const routes: RouteObject[] = [
   {
     path: '/',
@@ -18,7 +26,7 @@ const routes: RouteObject[] = [
   },
   {
     path: '/home',
-    element: <Home />,
+    element: LazyLoad(<Home />),
     children: [
       {
         path: '/home',
@@ -26,15 +34,15 @@ const routes: RouteObject[] = [
       },
       {
         path: '/home/edit/:direction?',
-        element: <Edit />
+        element: LazyLoad(<Edit />)
       },
       {
         path: '/home/enroll/:direction?',
-        element: <Enroll />
+        element: LazyLoad(<Enroll />)
       },
       {
         path: '/home/interview/:direction?',
-        element: <Interview />
+        element: LazyLoad(<Interview />)
       }
     ]
   },

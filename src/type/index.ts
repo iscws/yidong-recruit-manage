@@ -15,7 +15,9 @@ export interface userEnrollType {
 }
 
 export type MenuItemType = Required<MenuProps>['items'][number];
-
+export interface MenuType {
+  type: 'enroll' | 'interview' | 'edit';
+}
 // 登录数据
 export type LoginProps = {
   username: string;

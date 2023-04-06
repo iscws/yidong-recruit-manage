@@ -18,36 +18,19 @@ export const DetailWrapper = styled.div`
   .edit-info {
     flex: 1;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     /* height: 100vh; */
     margin-left: 20px;
-    /* background-color: #fff;
-    box-shadow: 0 0 8px 1px #eeeeee; */
     border-radius: 10px;
-    .asses-box {
-      margin-top: 20px;
-      background-color: #fff;
-      .title {
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-        min-height: 56px;
-        margin-bottom: -1px;
-        padding: 0 24px;
-        color: rgba(0, 0, 0, 0.88);
-        font-weight: 600;
-        font-size: 16px;
-        border-bottom: 1px solid #f0f0f0;
-      }
-      .assess-area {
-        padding: 20px;
-        position: relative;
-        .ant-form-item {
-        }
-      }
+    .status {
+      margin-bottom: 15px;
     }
-    .assess-area {
-      height: 100%;
-      position: relative;
+    .step-area {
+      /* height: 10vh; */
+      display: flex;
+      align-items: center;
     }
   }
 `;

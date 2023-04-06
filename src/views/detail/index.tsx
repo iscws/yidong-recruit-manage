@@ -9,10 +9,20 @@ import {
   Input,
   Button,
   Steps,
-  message
+  message,
+  FloatButton,
+  Modal
 } from 'antd';
 import { getUserInfoById } from '@/service/api';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+  ArrowLeftOutlined,
+  UserOutlined,
+  UsergroupDeleteOutlined,
+  FundOutlined,
+  ExclamationCircleFilled
+} from '@ant-design/icons';
+import { MenuType } from '@/type';
 
 interface DetailProps {
   children?: ReactNode;
@@ -40,17 +50,34 @@ const Detail: FC<DetailProps> = () => {
   // const [basicInfo, setBasicInfo] = useState<userEnrollType | null>(null);
   const params = useParams();
   const [current, setCurrent] = useState(0);
-  const next = () => {
-    setCurrent(current + 1);
-  };
-  const items = steps.map((item) => ({ key: item.title, title: item.title }));
+  const naviagate = useNavigate();
+  const { confirm } = Modal;
   useEffect(() => {
     console.log(params);
-
     getUserInfoById(Number(params.id)).then((res) => {
       console.log(res);
     });
   }, []);
+
+  const navigateTo = ({ type }: MenuType) => {
+    console.log(type);
+
+    naviagate(`/home/${type}/1`);
+  };
+
+  const showConfirm = () => {
+    confirm({
+      title: '你确定要切换状态吗？',
+      content: '请确保该状态已经结束',
+      icon: <ExclamationCircleFilled />,
+      onOk() {
+        setCurrent(current + 1);
+      },
+      onCancel() {
+        console.log('Cancel');
+      }
+    });
+  };
   return (
     <DetailWrapper>
       <div className="basic-info">
@@ -60,8 +87,12 @@ const Detail: FC<DetailProps> = () => {
           bordered={true}
           column={2}
         >
-          <Descriptions.Item label="姓名">Zhou Maomao</Descriptions.Item>
-          <Descriptions.Item label="电话">1810000000</Descriptions.Item>
+          <Descriptions.Item label="姓名" span={2}>
+            Zhou Maomao
+          </Descriptions.Item>
+          <Descriptions.Item label="电话" span={2}>
+            1810000000
+          </Descriptions.Item>
           <Descriptions.Item label="性别">
             <Radio.Group value={1}>
               <Radio value={1}>男</Radio>
@@ -82,44 +113,85 @@ const Detail: FC<DetailProps> = () => {
         </Descriptions>
       </div>
       <div className="edit-info">
-        <Card title="当前状态">
-          <Steps current={current} items={items} />
-          <div style={{ marginTop: 24 }}>
-            {current < steps.length - 1 && (
-              <Button type="primary" onClick={() => next()}>
-                下一个状态
-              </Button>
-            )}
-            {current === steps.length - 1 && (
-              <Button
-                type="primary"
-                onClick={() => message.success('Processing complete!')}
-              >
-                结束
-              </Button>
-            )}
-          </div>
-        </Card>
-
-        <div className="asses-box">
-          <div className="title">面评</div>
-          <Form name="assess" className="assess-area">
-            <Form.Item
-              name="intro"
-              rules={[{ required: true, message: '请至少写一个字' }]}
-            >
-              <Input.TextArea
-                showCount
-                maxLength={400}
-                placeholder="这位同学基础怎么说"
-              />
-            </Form.Item>
-
-            <Form.Item style={{ textAlign: 'right' }}>
-              <Button htmlType="submit">提交</Button>
-            </Form.Item>
-          </Form>
+        <div className="card-item status">
+          <Card title="当前状态">
+            <Steps
+              current={current}
+              items={steps.map((item) => ({
+                key: item.title,
+                title: item.title
+              }))}
+              className="step-area"
+            />
+            <div style={{ marginTop: 24 }}>
+              {current < steps.length - 1 && (
+                <Button type="primary" onClick={() => showConfirm()}>
+                  下一个状态
+                </Button>
+              )}
+              {current === steps.length - 1 && (
+                <Button
+                  type="primary"
+                  onClick={() => message.success('Processing complete!')}
+                >
+                  结束
+                </Button>
+              )}
+            </div>
+          </Card>
         </div>
+
+        <div className="card-item assess">
+          <Card title="面评">
+            <Form name="assess" className="assess-area">
+              <Form.Item
+                name="intro"
+                rules={[{ required: true, message: '请至少写一个字' }]}
+              >
+                <Input.TextArea
+                  showCount
+                  maxLength={400}
+                  style={{ height: '40vh' }}
+                  placeholder="这位同学基础怎么说"
+                />
+              </Form.Item>
+
+              <Form.Item style={{ textAlign: 'right' }}>
+                <Button htmlType="submit">提交</Button>
+              </Form.Item>
+            </Form>
+          </Card>
+        </div>
+
+        <FloatButton.Group
+          trigger="click"
+          type="primary"
+          style={{ right: 24 }}
+          icon={<ArrowLeftOutlined />}
+        >
+          <FloatButton
+            icon={<UsergroupDeleteOutlined />}
+            tooltip={'回到面试情况'}
+            onClick={() => {
+              navigateTo({ type: 'interview' });
+            }}
+          />
+          <FloatButton
+            icon={<UserOutlined />}
+            tooltip={'回到报名情况'}
+            onClick={() => {
+              navigateTo({ type: 'enroll' });
+            }}
+          />
+
+          <FloatButton
+            icon={<FundOutlined />}
+            tooltip={'回到修改面试'}
+            onClick={() => {
+              navigateTo({ type: 'edit' });
+            }}
+          />
+        </FloatButton.Group>
       </div>
     </DetailWrapper>
   );
