@@ -1,27 +1,21 @@
-name: Push build folder to build branch
-
+name: Build and Deploy
 on:
   push:
     branches:
       - main
 
 jobs:
-  push_build_folder:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
+      - uses: actions/checkout@v2 #检出最新代码
       - name: Install Dependencies
-        run: npm install
-
-      - name: Build Project
-        run: npm run build
-
-      - name: Push build folder to build branch
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: build
-          force: true
-          directory: ./build
+        run: npm install # 安装依赖
+      - name: Build
+        run: npm run build # 执行构建
+      - name: Create or update Build Branch
+        run: |
+          git checkout -B build origin/build
+          git add .
+          git commit -m "Add build artifacts"
+          git push -f origin build
