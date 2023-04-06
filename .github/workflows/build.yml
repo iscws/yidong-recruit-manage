@@ -1,0 +1,27 @@
+name: Push build folder to build branch
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  push_build_folder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Project
+        run: npm run build
+
+      - name: Push build folder to build branch
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: build
+          force: true
+          directory: ./build
