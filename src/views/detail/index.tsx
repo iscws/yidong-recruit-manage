@@ -22,12 +22,11 @@ import {
   FundOutlined,
   ExclamationCircleFilled
 } from '@ant-design/icons';
-import { MenuType } from '@/type';
+import { MenuType, userEnrollType } from '@/type';
 
 interface DetailProps {
   children?: ReactNode;
 }
-
 const steps = [
   {
     title: '报名成功'
@@ -47,21 +46,20 @@ const steps = [
 ];
 
 const Detail: FC<DetailProps> = () => {
-  // const [basicInfo, setBasicInfo] = useState<userEnrollType | null>(null);
+  const [basicInfo, setBasicInfo] = useState<userEnrollType | null>(null);
   const params = useParams();
   const [current, setCurrent] = useState(0);
   const naviagate = useNavigate();
   const { confirm } = Modal;
   useEffect(() => {
-    console.log(params);
     getUserInfoById(Number(params.id)).then((res) => {
-      console.log(res);
+      console.log(res.data);
+
+      setBasicInfo(res.data);
     });
   }, []);
 
   const navigateTo = ({ type }: MenuType) => {
-    console.log(type);
-
     naviagate(`/home/${type}/1`);
   };
 
@@ -88,27 +86,29 @@ const Detail: FC<DetailProps> = () => {
           column={2}
         >
           <Descriptions.Item label="姓名" span={2}>
-            Zhou Maomao
+            {basicInfo?.username}
           </Descriptions.Item>
           <Descriptions.Item label="电话" span={2}>
-            1810000000
+            {basicInfo?.phone}
           </Descriptions.Item>
           <Descriptions.Item label="性别">
-            <Radio.Group value={1}>
+            <Radio.Group value={basicInfo?.sex === '男' ? 1 : 2}>
               <Radio value={1}>男</Radio>
               <Radio value={2}>女</Radio>
             </Radio.Group>
           </Descriptions.Item>
-          <Descriptions.Item label="学院">计算机学院</Descriptions.Item>
-          <Descriptions.Item label="专业">计算机类</Descriptions.Item>
+          <Descriptions.Item label="学院">
+            {basicInfo?.college}
+          </Descriptions.Item>
+          <Descriptions.Item label="专业">{basicInfo?.major}</Descriptions.Item>
           <Descriptions.Item label="方向">
-            <Radio.Group value={1}>
+            <Radio.Group value={basicInfo?.direction === '前端' ? 1 : 2}>
               <Radio value={1}>前端</Radio>
               <Radio value={2}>后端</Radio>
             </Radio.Group>
           </Descriptions.Item>
           <Descriptions.Item label="自我介绍">
-            11111111111111111111111111111111
+            {basicInfo?.introduction}
           </Descriptions.Item>
         </Descriptions>
       </div>

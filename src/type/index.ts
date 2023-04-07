@@ -1,7 +1,7 @@
 import { MenuProps } from 'antd';
 export interface userEnrollType {
-  id: string;
-  username: number;
+  id: number;
+  username: string;
   sex: string;
   studentId: string;
   phone: number;
@@ -11,6 +11,7 @@ export interface userEnrollType {
   status: string;
   interviewTime?: interviewTime;
   assess?: string;
+  direction?: string;
 }
 
 export type MenuItemType = Required<MenuProps>['items'][number];

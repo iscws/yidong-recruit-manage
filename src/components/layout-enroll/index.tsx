@@ -1,7 +1,7 @@
 import React, { useCallback, memo, useState, useEffect } from 'react';
 import type { FC, ReactNode } from 'react';
 import { searchType, userEnrollType } from '@/type';
-import { Button, Form, Input, Table } from 'antd';
+import { Button, Form, Input, message, Table } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 import { EnrollWrapper } from './style';
 import { getEnrollData, getSearchData } from '@/service/api';
@@ -23,9 +23,18 @@ const LayoutEnroll: FC<LayoutEnrollProps> = () => {
 
   // 搜索
   const searchFinish = (value: searchType) => {
+    if (value.username === undefined || value.username === '') {
+      reflashData();
+      return;
+    }
     getSearchData(value).then((res) => {
-      console.log(res);
-      setInfoData(res.data);
+      if (res.code === 200 && res.data !== null) {
+        setInfoData([res.data]);
+        message.success(res.message);
+      } else {
+        setInfoData([]);
+        message.error(res.message + ',请输入全名');
+      }
     });
   };
 
@@ -33,7 +42,8 @@ const LayoutEnroll: FC<LayoutEnrollProps> = () => {
     {
       title: '名字',
       dataIndex: 'username',
-      key: 'username'
+      key: 'username',
+      filterMode: 'tree'
     },
     {
       title: '性别',
@@ -69,7 +79,6 @@ const LayoutEnroll: FC<LayoutEnrollProps> = () => {
       title: '进入详情',
       key: 'index',
       render: (record: userEnrollType) => {
-        console.log(record);
         return (
           <Button onClick={() => toUserDetail(record)} type="primary">
             进入详情
@@ -93,10 +102,7 @@ const LayoutEnroll: FC<LayoutEnrollProps> = () => {
       <div className="area">
         <div className="search">
           <Form className="search-form" onFinish={searchFinish}>
-            <Form.Item
-              name="username"
-              rules={[{ required: true, message: '请至少输入一个字' }]}
-            >
+            <Form.Item name="username">
               <Input placeholder="请输入完整的姓名"></Input>
             </Form.Item>
 

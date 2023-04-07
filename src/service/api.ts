@@ -63,7 +63,7 @@ export function deleteInterviewTime(id: number) {
 // 获取某个用户的基本信息
 export function getUserInfoById(id: number) {
   return request.get({
-    url: '/api/admin/getUserInfoById',
-    data: id
+    url: `/api/admin/getUserInfoById`,
+    params: { id }
   });
 }
