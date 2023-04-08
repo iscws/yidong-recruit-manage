@@ -1,4 +1,5 @@
 import { MenuItemType } from '@/type';
+import React from 'react';
 
 // 截取字符串，并将其转为数字
 export function substrNum(str: string): number {

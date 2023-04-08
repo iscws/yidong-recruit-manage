@@ -1,68 +1,24 @@
-import React, { ReactNode, Suspense, useState } from 'react';
-import { TeamOutlined, UserOutlined, FundOutlined } from '@ant-design/icons';
-import { Layout, Menu } from 'antd';
-import { HomeWrapper } from './style';
-import { getItem, substrNum } from '@/utils';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { MenuItemType } from '@/type';
+import React, { ReactNode, Suspense } from 'react';
 
-// 定义菜单的item
-const MenuItems: MenuItemType[] = [
-  getItem('报名情况', 'enroll', <UserOutlined />, [
-    getItem('前端', 'enroll-1'),
-    getItem('后端', 'enroll-2')
-  ]),
-  getItem('面试情况', 'interview', <TeamOutlined />, [
-    getItem('前端', 'interview-1'),
-    getItem('后端', 'interview-2')
-  ]),
-  getItem('修改面试', 'edit', <FundOutlined />, [
-    getItem('前端', 'edit-1'),
-    getItem('后端', 'edit-2')
-  ])
-];
+import { Layout } from 'antd';
+import { HomeWrapper } from './style';
+import { Outlet } from 'react-router-dom';
+import HomeMenu from '@/components/home-menu';
 
 export interface basicHomeProps {
   children?: ReactNode;
 }
 const Home: React.FC<basicHomeProps> = () => {
   const { Content, Sider } = Layout;
-  const [collapsed, setCollapsed] = useState(false);
-  // const {location,setLocation}
-  const navigate = useNavigate();
-  // 根据路径选择menu的展开项，利用split对url进行分组
-  const location = useLocation().pathname.split('/');
 
-  // 将点击item后的值传入组件当中
-  function itemClick(value: any) {
-    const path = value.keyPath[1];
-    const direction = `/${substrNum(value.keyPath[0])}`;
-
-    navigate(`/home/${path}${direction}`);
-  }
   return (
     <HomeWrapper>
       <Layout style={{ minHeight: '100vh' }}>
-        <Sider
-          collapsible
-          collapsed={collapsed}
-          onCollapse={(value) => setCollapsed(value)}
-          className="sliderArea"
-        >
+        <Sider className="sliderArea">
           <div className="logo-area">
             <img src={require('@/assets/img/logo.png')} className="logo" />
           </div>
-
-          <Menu
-            theme="dark"
-            mode="inline"
-            items={MenuItems}
-            onClick={itemClick}
-            selectedKeys={[`${location[2]}-${location[3]}`]}
-            defaultOpenKeys={[
-              location[2] === undefined ? 'enroll' : location[2]
-            ]}
-          />
+          <HomeMenu />
         </Sider>
         <Layout className="site-layout">
           <Content>

@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import type { FC, ReactNode } from 'react';
 import { interviewTime } from '@/type';
 import { ItemWrapper } from './style';
@@ -9,13 +9,15 @@ import {
   Input,
   message,
   Popconfirm,
-  Radio
+  Radio,
+  TimePicker
 } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import {
   addNewInterview,
   deleteInterviewTime,
+  getAppointSec,
   updateInterviewInfo
 } from '@/service/api';
 
@@ -26,8 +28,10 @@ interface IProps {
 
 const InterviewItem: FC<IProps> = ({ infoData }) => {
   const [isDelete, setIsDelete] = useState(false);
+  // const [isAppoint, setIsAppoint] = useState(false);
+  const [isDefault, setIsDefault] = useState(infoData.isdefalut ?? false);
   const deleteItem = async () => {
-    if (infoData.isdefalut === undefined) {
+    if (!isDefault) {
       const res = await deleteInterviewTime(infoData.id as number);
       if (res.code === 200) {
         message.success('删除成功');
@@ -35,34 +39,35 @@ const InterviewItem: FC<IProps> = ({ infoData }) => {
       } else {
         message.error(res.message);
       }
+    } else {
+      message.success('删除成功');
+      setIsDelete(true);
     }
   };
   const formSubmit = (value: any) => {
     const submitValue: interviewTime = {
       ...infoData,
       ...value,
-      startTime: value['startTime'].format('YYYY-MM-DD HH:mm:ss'),
-      endTime: value['endTime'].format('YYYY-MM-DD HH:mm:ss')
+      startTime:
+        value['date'].format('YYYY-MM-DD') +
+        ' ' +
+        value['startTime'].format('HH:mm:ss'),
+      endTime:
+        value['date'].format('YYYY-MM-DD') +
+        ' ' +
+        value['endTime'].format('HH:mm:ss')
     };
+    console.log(submitValue);
 
     // console.log(submitValue);
-    if (infoData.isdefalut === true) {
-      const newValue = {
-        startTime: submitValue.startTime,
-        endTime: submitValue.endTime,
-        direction: 1,
-        location: submitValue.location,
-        quota: submitValue.quota,
-        spareQuota: submitValue.spareQuota
-      };
-
-      addNewInterview(newValue).then((res) => {
+    if (isDefault) {
+      addNewInterview(submitValue).then((res) => {
         if (res.code === 200) {
           message.success(res.message);
+          setIsDefault(false);
         } else {
           message.error(res.message);
         }
-        infoData.isdefalut = false;
       });
     } else {
       updateInterviewInfo(submitValue).then((res) => {
@@ -74,17 +79,33 @@ const InterviewItem: FC<IProps> = ({ infoData }) => {
       });
     }
   };
+
+  useEffect(() => {
+    // 查询当前时间是否能被更改
+    getAppointSec(infoData.id as number).then((res) => {
+      console.log(infoData.id, res);
+    });
+  }, []);
   return isDelete ? null : (
     <ItemWrapper>
       <div className="inner">
         <Form name="interviewForm" onFinish={formSubmit}>
           <Form.Item
             rules={[{ required: true, message: '请填写日期' }]}
+            name="date"
+            label="日期"
+            initialValue={dayjs(infoData.startTime)}
+          >
+            <DatePicker format="YYYY-MM-DD" />
+          </Form.Item>
+
+          <Form.Item
             name="startTime"
             label="开始时间"
             initialValue={dayjs(infoData.startTime)}
+            rules={[{ required: true, message: '请填写时间' }]}
           >
-            <DatePicker format="YYYY-MM-DD HH:mm:ss" />
+            <TimePicker format={'HH:mm'} />
           </Form.Item>
 
           <Form.Item
@@ -93,7 +114,7 @@ const InterviewItem: FC<IProps> = ({ infoData }) => {
             initialValue={dayjs(infoData.endTime)}
             rules={[{ required: true, message: '请填写日期' }]}
           >
-            <DatePicker format="YYYY-MM-DD HH:mm:ss" />
+            <TimePicker format={'HH:mm'} />
           </Form.Item>
 
           <Form.Item
@@ -128,7 +149,7 @@ const InterviewItem: FC<IProps> = ({ infoData }) => {
 
           <Form.Item>
             <Button type="primary" htmlType="submit">
-              {infoData.isdefalut === true ? '确定新建' : '更改'}
+              {isDefault ? '确定新建' : '更改'}
             </Button>
           </Form.Item>
         </Form>

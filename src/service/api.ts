@@ -67,3 +67,23 @@ export function getUserInfoById(id: number) {
     params: { id }
   });
 }
+
+export function refleshToken() {
+  const username = localStorage.getItem('username');
+  const password = localStorage.getItem('password');
+
+  return request.post({
+    url: '/api/admin/login/pw',
+    params: {
+      username,
+      password
+    }
+  });
+}
+
+// 查询当前面试时间是否有被预约`
+export function getAppointSec(id: number) {
+  return request.get({
+    url: `/api/admin/ifSec/${id}`
+  });
+}

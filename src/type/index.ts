@@ -14,6 +14,8 @@ export interface userEnrollType {
   direction?: string;
 }
 
+export type TokenFunc = (token: string) => void;
+
 export type MenuItemType = Required<MenuProps>['items'][number];
 export interface MenuType {
   type: 'enroll' | 'interview' | 'edit';
