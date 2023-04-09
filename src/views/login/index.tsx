@@ -1,10 +1,10 @@
 import React from 'react';
 import type { FC, ReactNode } from 'react';
 import { login } from '@/service/api';
-import styled from 'styled-components';
-import { Button, Checkbox, Form, Input, message } from 'antd';
+import { Button, Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { LoginProps } from '@/type';
+import { LoginWraaper } from './style';
 
 interface IProps {
   children?: ReactNode;
@@ -12,25 +12,6 @@ interface IProps {
 
 // username: 123
 // pwd:123
-
-// 样式处理
-const LoginWraaper = styled['div']`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  .container {
-    padding: 30px 40px 0;
-    background-color: #ffff;
-    box-shadow: 0 0 8px 1px #eeeeee;
-    border-radius: 10px;
-    .title {
-      text-align: center;
-      padding-bottom: 20px;
-      font-size: 20px;
-    }
-  }
-`;
 
 const Login: FC<IProps> = () => {
   const navigate = useNavigate();
@@ -59,7 +40,9 @@ const Login: FC<IProps> = () => {
   return (
     <LoginWraaper>
       <div className="container">
-        <div className="title">易动招新后台管理</div>
+        <div className="title">
+          <img src={require('@/assets/img/logo.png')}></img>
+        </div>
         <Form
           name="basic"
           initialValues={{ remember: true }}
@@ -83,16 +66,15 @@ const Login: FC<IProps> = () => {
             <Input.Password />
           </Form.Item>
 
-          <Form.Item name="remember" valuePropName="checked">
-            <Checkbox>记住我</Checkbox>
-          </Form.Item>
-
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" style={{ width: '100px' }}>
               登录
             </Button>
           </Form.Item>
         </Form>
+      </div>
+      <div className="bgc">
+        <img src={require('@/assets/img/bgc.jpg')} alt="" />
       </div>
     </LoginWraaper>
   );

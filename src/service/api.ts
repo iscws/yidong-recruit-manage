@@ -27,6 +27,12 @@ export function getInterviewTime() {
     url: '/api/admin/getAllTime'
   });
 }
+// 根据方向获取面试时间
+export function getInterviewTimeDirec(direction: number) {
+  return request.get({
+    url: `/api/admin/getAllTimeByDir/${direction}`
+  });
+}
 
 export async function refreshToken() {
   const username = window.localStorage.getItem('username') as string;
@@ -85,5 +91,12 @@ export function refleshToken() {
 export function getAppointSec(id: number) {
   return request.get({
     url: `/api/admin/ifSec/${id}`
+  });
+}
+
+// 查询多少分钟之前能预约
+export function getPreRecruitTime() {
+  return request.get({
+    url: `/api/admin/getPreRecruitTime`
   });
 }

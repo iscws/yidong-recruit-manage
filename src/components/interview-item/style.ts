@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const ItemWrapper = styled.div`
-  width: 33%;
+  width: 33.3%;
   padding: 15px;
   .inner {
     position: relative;
@@ -9,6 +9,12 @@ export const ItemWrapper = styled.div`
     background-color: #fff;
     > div {
       margin-bottom: 10px;
+    }
+    .tips {
+      position: absolute;
+      left: 0px;
+      color: red;
+      font-size: 8px;
     }
     .delete {
       position: absolute;

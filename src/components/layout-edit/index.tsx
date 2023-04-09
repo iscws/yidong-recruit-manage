@@ -5,7 +5,8 @@ import { interviewTime } from '@/type';
 import InterviewItem from '../interview-item';
 import { Button, Form, Input, FloatButton, Empty } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { getInterviewTime } from '@/service/api';
+import { getInterviewTimeDirec, getPreRecruitTime } from '@/service/api';
+import { useParams } from 'react-router-dom';
 
 interface LayoutEditProps {
   children?: ReactNode;
@@ -13,7 +14,8 @@ interface LayoutEditProps {
 
 const LayoutEdit: FC<LayoutEditProps> = () => {
   const [infoData, setInfoData] = useState<interviewTime[]>([]);
-
+  const [preTime, setPreTime] = useState(0);
+  const params = useParams();
   // 新增面试时间
   const addTime = useCallback(() => {
     const date = new Date();
@@ -26,7 +28,8 @@ const LayoutEdit: FC<LayoutEditProps> = () => {
         quota: '',
         location: '',
         spareQuota: 0,
-        isdefalut: true
+        isdefalut: true,
+        direction: Number(params.direction)
       }
     ]);
     // 滑动到底部;
@@ -42,10 +45,15 @@ const LayoutEdit: FC<LayoutEditProps> = () => {
 
   // 获取面试数据
   useEffect(() => {
-    getInterviewTime().then((res) => {
+    getInterviewTimeDirec(Number(params.direction)).then((res) => {
       setInfoData(res.data);
     });
-  }, []);
+
+    getPreRecruitTime().then((res) => {
+      res.code === 200 && setPreTime(res.data);
+    });
+  }, [params]);
+
   return (
     <EditWrapper>
       <div className="items-header">
@@ -53,9 +61,9 @@ const LayoutEdit: FC<LayoutEditProps> = () => {
           <Form.Item
             label="面试开始前多久能预约（单位：分钟）"
             name="time"
-            initialValue={0}
+            // initialValue={preTime}
           >
-            <Input type="number" />
+            <Input type="number" value={preTime} />
           </Form.Item>
           <Form.Item>
             <Button htmlType="submit" type="primary">

@@ -20,6 +20,7 @@ import {
   getAppointSec,
   updateInterviewInfo
 } from '@/service/api';
+import { useParams } from 'react-router-dom';
 
 interface IProps {
   infoData: interviewTime;
@@ -28,8 +29,9 @@ interface IProps {
 
 const InterviewItem: FC<IProps> = ({ infoData }) => {
   const [isDelete, setIsDelete] = useState(false);
-  // const [isAppoint, setIsAppoint] = useState(false);
+  const [isAppoint, setIsAppoint] = useState(false);
   const [isDefault, setIsDefault] = useState(infoData.isdefalut ?? false);
+  const params = useParams();
   const deleteItem = async () => {
     if (!isDefault) {
       const res = await deleteInterviewTime(infoData.id as number);
@@ -46,8 +48,10 @@ const InterviewItem: FC<IProps> = ({ infoData }) => {
   };
   const formSubmit = (value: any) => {
     const submitValue: interviewTime = {
-      ...infoData,
-      ...value,
+      id: infoData.id as number,
+      location: value.location,
+      direction: Number(params.direction),
+      quota: value.quota,
       startTime:
         value['date'].format('YYYY-MM-DD') +
         ' ' +
@@ -57,13 +61,11 @@ const InterviewItem: FC<IProps> = ({ infoData }) => {
         ' ' +
         value['endTime'].format('HH:mm:ss')
     };
-    console.log(submitValue);
-
-    // console.log(submitValue);
     if (isDefault) {
       addNewInterview(submitValue).then((res) => {
         if (res.code === 200) {
-          message.success(res.message);
+          infoData.id = res.data;
+          message.success('添加成功');
           setIsDefault(false);
         } else {
           message.error(res.message);
@@ -82,9 +84,10 @@ const InterviewItem: FC<IProps> = ({ infoData }) => {
 
   useEffect(() => {
     // 查询当前时间是否能被更改
-    getAppointSec(infoData.id as number).then((res) => {
-      console.log(infoData.id, res);
-    });
+    isDefault === undefined &&
+      getAppointSec(infoData.id as number).then((res) => {
+        setIsAppoint(!res.data);
+      });
   }, []);
   return isDelete ? null : (
     <ItemWrapper>
@@ -105,9 +108,8 @@ const InterviewItem: FC<IProps> = ({ infoData }) => {
             initialValue={dayjs(infoData.startTime)}
             rules={[{ required: true, message: '请填写时间' }]}
           >
-            <TimePicker format={'HH:mm'} />
+            <TimePicker format={'HH:mm'} disabled={isAppoint} />
           </Form.Item>
-
           <Form.Item
             name="endTime"
             label="结束时间"
@@ -127,18 +129,6 @@ const InterviewItem: FC<IProps> = ({ infoData }) => {
           </Form.Item>
 
           <Form.Item
-            name="direction"
-            label="方向"
-            initialValue={infoData.direction}
-            rules={[{ required: true, message: '请填写方向' }]}
-          >
-            <Radio.Group>
-              <Radio value={1}> 前端 </Radio>
-              <Radio value={2}> 后端 </Radio>
-            </Radio.Group>
-          </Form.Item>
-
-          <Form.Item
             name="location"
             label="地点"
             initialValue={infoData.location}
@@ -147,6 +137,16 @@ const InterviewItem: FC<IProps> = ({ infoData }) => {
             <Input />
           </Form.Item>
 
+          <Form.Item
+            label="方向"
+            initialValue={infoData.direction}
+            rules={[{ required: true, message: '请填写方向' }]}
+          >
+            <Radio.Group value={infoData.direction}>
+              <Radio value={1}> 前端 </Radio>
+              <Radio value={2}> 后端 </Radio>
+            </Radio.Group>
+          </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">
               {isDefault ? '确定新建' : '更改'}
