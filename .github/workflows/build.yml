@@ -8,25 +8,41 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        max-tries: [1, 2, 3]
     steps:
       - name: Checkout Repo
-
         uses: actions/checkout@v2
-
       - name: Install Dependencies
-
         run: npm install
-
       - name: Build Production Code
-
         run: npm run build
-
       - name: Deploy to Build Branch
-
+        id: deploy
         uses: peaceiris/actions-gh-pages@v3
-
         with:
           github_token: ${{ secrets.PRESS_TOKEN }}
           publish_branch: build
           publish_dir: ./build
+      - name: Check for deployment success
+        run: exit ${{ steps.deploy.outcome }}
+        shell: bash
+        continue-on-error: true
+      - name: Retry on failure
+        if: steps.deploy.outcome != 'success'
+        run: |
+          if [ ${{ matrix.max-tries }} -gt 1 ]; then
+            echo "Retry deployment..."
+            unset GITHUB_TOKEN
+            export DEPLOYMENT_RETRIES=$(((DEPLOYMENT_RETRIES or 0) + 1))
+            sleep 10s
+            git push --delete origin build || true
+            git branch -D build || true
+            git checkout -b build
+            git commit --allow-empty -m "Trigger rebuild"
+            git push origin build
+            exit 75 # Neutral exit code to prevent further steps from running
+          else
+            exit 1 # Error exit code if max tries exceeded
+          fi

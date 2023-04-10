@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { EnrollWrapper } from './style';
 import { getEnrollData, getSearchData } from '@/service/api';
 import { ColumnsType } from 'antd/es/table';
+import { useThrottle } from '@/hooks/useThrottle';
 
 interface LayoutEnrollProps {
   children?: ReactNode;
@@ -22,7 +23,9 @@ const LayoutEnroll: FC<LayoutEnrollProps> = () => {
   }, []);
 
   // 搜索
-  const searchFinish = (value: searchType) => {
+  const searchFinish = useThrottle((value: searchType) => {
+    console.log(value);
+
     if (value.username === undefined || value.username === '') {
       reflashData();
       return;
@@ -36,7 +39,7 @@ const LayoutEnroll: FC<LayoutEnrollProps> = () => {
         message.error(res.message + ',请输入全名');
       }
     });
-  };
+  }, 1000);
 
   const columns: ColumnsType<userEnrollType> = [
     {

@@ -2,10 +2,10 @@ import React, { memo, useCallback, useEffect, useState } from 'react';
 import type { FC, ReactNode } from 'react';
 import { userEnrollType } from '@/type';
 import { InterviewWrapper } from './style';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { getInterviewTime } from '@/service/api';
 import { Table, Button, Select } from 'antd';
-import { ColumnsType } from 'antd/es/table';
+// import { ColumnsType } from 'antd/es/table';
 import Mock from 'mockjs';
 
 interface LayoutInterProps {
@@ -14,63 +14,63 @@ interface LayoutInterProps {
 
 const LayoutInter: FC<LayoutInterProps> = () => {
   const navigate = useNavigate();
-  const params = useParams();
+  // const params = useParams();
   const [interviewList, setInterviewList] = useState<userEnrollType[]>([]);
-  const [interviewing, setinterviewing] = useState<userEnrollType[]>([]);
+  // const [interviewing, setinterviewing] = useState<userEnrollType[]>([]);
   // 获取面试数据
   useEffect(() => {
     getInterviewTime().then((res) => {
-      // console.log(res);
+      console.log(res);
     });
-    const columns: ColumnsType<userEnrollType> = [
-      {
-        title: '名字',
-        dataIndex: 'username',
-        key: 'username',
-        filterMode: 'tree'
-      },
-      {
-        title: '性别',
-        key: 'sex',
-        dataIndex: 'sex'
-      },
-      {
-        title: '学号',
-        key: 'studentId',
-        dataIndex: 'studentId'
-      },
-      {
-        title: '手机号码',
-        key: 'phone',
-        dataIndex: 'phone'
-      },
-      {
-        title: '学院',
-        key: 'college',
-        dataIndex: 'college'
-      },
-      {
-        title: '专业',
-        key: 'major',
-        dataIndex: 'major'
-      },
-      {
-        title: '状态',
-        key: 'status',
-        dataIndex: 'status'
-      },
-      {
-        title: '进入详情',
-        key: 'index',
-        render: (record: userEnrollType) => {
-          return (
-            <Button onClick={() => toUserDetail(record)} type="primary">
-              进入详情
-            </Button>
-          );
-        }
-      }
-    ];
+    // const columns: ColumnsType<userEnrollType> = [
+    //   {
+    //     title: '名字',
+    //     dataIndex: 'username',
+    //     key: 'username',
+    //     filterMode: 'tree'
+    //   },
+    //   {
+    //     title: '性别',
+    //     key: 'sex',
+    //     dataIndex: 'sex'
+    //   },
+    //   {
+    //     title: '学号',
+    //     key: 'studentId',
+    //     dataIndex: 'studentId'
+    //   },
+    //   {
+    //     title: '手机号码',
+    //     key: 'phone',
+    //     dataIndex: 'phone'
+    //   },
+    //   {
+    //     title: '学院',
+    //     key: 'college',
+    //     dataIndex: 'college'
+    //   },
+    //   {
+    //     title: '专业',
+    //     key: 'major',
+    //     dataIndex: 'major'
+    //   },
+    //   {
+    //     title: '状态',
+    //     key: 'status',
+    //     dataIndex: 'status'
+    //   },
+    //   {
+    //     title: '进入详情',
+    //     key: 'index',
+    //     render: (record: userEnrollType) => {
+    //       return (
+    //         <Button onClick={() => toUserDetail(record)} type="primary">
+    //           进入详情
+    //         </Button>
+    //       );
+    //     }
+    //   }
+    // ];
     const mock = Mock.mock({
       'data|20': [
         {
