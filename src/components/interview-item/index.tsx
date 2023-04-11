@@ -29,22 +29,21 @@ interface IProps {
 
 const InterviewItem: FC<IProps> = ({ infoData }) => {
   const [isDelete, setIsDelete] = useState(false);
-  const [isAppoint, setIsAppoint] = useState(false);
+  const [isAppoint, setIsAppoint] = useState<boolean>(false);
   const [isDefault, setIsDefault] = useState(infoData.isdefalut ?? false);
   const params = useParams();
   const deleteItem = async () => {
     if (!isDefault) {
       const res = await deleteInterviewTime(infoData.id as number);
-      if (res.code === 200) {
-        message.success('删除成功');
-        setIsDelete(true);
-      } else {
+      if (res.code !== 200) {
         message.error(res.message);
+        console.log(res);
+
+        return;
       }
-    } else {
-      message.success('删除成功');
-      setIsDelete(true);
     }
+    message.success('删除成功');
+    setIsDelete(true);
   };
   const formSubmit = (value: any) => {
     const submitValue: interviewTime = {
@@ -84,9 +83,11 @@ const InterviewItem: FC<IProps> = ({ infoData }) => {
 
   useEffect(() => {
     // 查询当前时间是否能被更改
-    isDefault === undefined &&
+    !isDefault &&
       getAppointSec(infoData.id as number).then((res) => {
-        setIsAppoint(!res.data);
+        console.log(res);
+
+        setIsAppoint(!res.data as boolean);
       });
   }, []);
   return isDelete ? null : (

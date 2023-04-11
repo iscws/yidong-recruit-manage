@@ -3,10 +3,15 @@ import type { FC, ReactNode } from 'react';
 import { EditWrapper } from './style';
 import { interviewTime } from '@/type';
 import InterviewItem from '../interview-item';
-import { Button, Form, Input, FloatButton, Empty } from 'antd';
+import { Button, Form, Input, FloatButton, Empty, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { getInterviewTimeDirec, getPreRecruitTime } from '@/service/api';
+import {
+  editPreRecruitTime,
+  getInterviewTimeDirec,
+  getPreRecruitTime
+} from '@/service/api';
 import { useParams } from 'react-router-dom';
+import { useThrottle } from '@/hooks/useThrottle';
 
 interface LayoutEditProps {
   children?: ReactNode;
@@ -39,13 +44,19 @@ const LayoutEdit: FC<LayoutEditProps> = () => {
   }, [infoData]);
 
   // 更改面试前预约的时间
-  const changeRecruitTime = (value: { time: string }) => {
-    console.log(value);
-  };
+  const changeRecruitTime = useThrottle((value: { time: string }) => {
+    editPreRecruitTime(Number(value.time)).then((res) => {
+      res.code === 200
+        ? message.success(res.message)
+        : message.error(res.message);
+    });
+  }, 200);
 
   // 获取面试数据
   useEffect(() => {
     getInterviewTimeDirec(Number(params.direction)).then((res) => {
+      console.log(res);
+
       setInfoData(res.data);
     });
 
@@ -57,20 +68,26 @@ const LayoutEdit: FC<LayoutEditProps> = () => {
   return (
     <EditWrapper>
       <div className="items-header">
-        <Form name="timeForm" onFinish={changeRecruitTime} className="timeForm">
-          <Form.Item
-            label="面试开始前多久能预约（单位：分钟）"
-            name="time"
-            // initialValue={preTime}
+        {preTime !== 0 && (
+          <Form
+            name="timeForm"
+            onFinish={changeRecruitTime}
+            className="timeForm"
           >
-            <Input type="number" value={preTime} />
-          </Form.Item>
-          <Form.Item>
-            <Button htmlType="submit" type="primary">
-              提交
-            </Button>
-          </Form.Item>
-        </Form>
+            <Form.Item
+              label="面试开始前多久能预约（单位：分钟）"
+              name="time"
+              initialValue={preTime}
+            >
+              <Input type="number" />
+            </Form.Item>
+            <Form.Item>
+              <Button htmlType="submit" type="primary">
+                提交
+              </Button>
+            </Form.Item>
+          </Form>
+        )}
       </div>
       <div className="items-area">
         {infoData.length !== 0 ? (

@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useEffect } from 'react';
 type fnType = (...args: any) => any;
 
-export function useDebounce(fn: fnType, delay: number, dep: any[] = []) {
+export function useDebounce(fn: fnType, delay: number) {
   // 利用useRef存入函数以及timer
   const { current } = useRef<{ fn: fnType; timer: NodeJS.Timeout | null }>({
     fn,

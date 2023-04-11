@@ -100,3 +100,10 @@ export function getPreRecruitTime() {
     url: `/api/admin/getPreRecruitTime`
   });
 }
+
+// 更改多少分钟之前能预约
+export function editPreRecruitTime(time: number) {
+  return request.get({
+    url: `/api/admin/changeRecruitTime/${time}`
+  });
+}

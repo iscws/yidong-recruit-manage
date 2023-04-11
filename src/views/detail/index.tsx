@@ -29,22 +29,34 @@ interface DetailProps {
 }
 const steps = [
   {
+    key: 0,
     title: '报名成功'
   },
   {
+    key: 1,
     title: '等待面试'
   },
   {
+    key: 2,
     title: '排队中'
   },
   {
+    key: 3,
     title: '面试中'
   },
   {
+    key: 4,
     title: '面试结束'
   }
 ];
 
+const stepsMap = new Map([
+  ['报名成功', 0],
+  ['等待面试', 1],
+  ['排队中', 2],
+  ['面试中', 3],
+  ['面试结束', 4]
+]);
 const Detail: FC<DetailProps> = () => {
   const [basicInfo, setBasicInfo] = useState<userEnrollType | null>(null);
   const params = useParams();
@@ -54,7 +66,7 @@ const Detail: FC<DetailProps> = () => {
   useEffect(() => {
     getUserInfoById(Number(params.id)).then((res) => {
       console.log(res.data);
-
+      setCurrent(stepsMap.get(res.data.status) as number);
       setBasicInfo(res.data);
     });
   }, []);
@@ -125,7 +137,11 @@ const Detail: FC<DetailProps> = () => {
             />
             <div style={{ marginTop: 24 }}>
               {current < steps.length - 1 && (
-                <Button type="primary" onClick={() => showConfirm()}>
+                <Button
+                  type="primary"
+                  onClick={() => showConfirm()}
+                  disabled={current <= 1}
+                >
                   下一个状态
                 </Button>
               )}
