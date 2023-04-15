@@ -1,12 +1,12 @@
-import React, { useCallback, memo, useState, useEffect } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import type { FC, ReactNode } from 'react';
 import { searchType, userEnrollType } from '@/type';
-import { Button, Form, Input, message, Table } from 'antd';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Button, Form, Input, message } from 'antd';
+import { useParams } from 'react-router-dom';
 import { EnrollWrapper } from './style';
 import { getEnrollData, getSearchData } from '@/service/api';
-import { ColumnsType } from 'antd/es/table';
 import { useThrottle } from '@/hooks/useThrottle';
+import HomeTable from '../home-table';
 
 interface LayoutEnrollProps {
   children?: ReactNode;
@@ -15,12 +15,6 @@ interface LayoutEnrollProps {
 const LayoutEnroll: FC<LayoutEnrollProps> = () => {
   const [infoData, setInfoData] = useState<userEnrollType[]>([]);
   const params = useParams();
-  const navigate = useNavigate();
-
-  // 进入用户详情页
-  const toUserDetail = useCallback((record: userEnrollType) => {
-    navigate(`/detail/${record.id}`);
-  }, []);
 
   // 搜索
   const searchFinish = useThrottle((value: searchType) => {
@@ -41,55 +35,6 @@ const LayoutEnroll: FC<LayoutEnrollProps> = () => {
     });
   }, 1000);
 
-  const columns: ColumnsType<userEnrollType> = [
-    {
-      title: '名字',
-      dataIndex: 'username',
-      key: 'username',
-      filterMode: 'tree'
-    },
-    {
-      title: '性别',
-      key: 'sex',
-      dataIndex: 'sex'
-    },
-    {
-      title: '学号',
-      key: 'studentId',
-      dataIndex: 'studentId'
-    },
-    {
-      title: '手机号码',
-      key: 'phone',
-      dataIndex: 'phone'
-    },
-    {
-      title: '学院',
-      key: 'college',
-      dataIndex: 'college'
-    },
-    {
-      title: '专业',
-      key: 'major',
-      dataIndex: 'major'
-    },
-    {
-      title: '状态',
-      key: 'status',
-      dataIndex: 'status'
-    },
-    {
-      title: '进入详情',
-      key: 'index',
-      render: (record: userEnrollType) => {
-        return (
-          <Button onClick={() => toUserDetail(record)} type="primary">
-            进入详情
-          </Button>
-        );
-      }
-    }
-  ];
   // 更新数据
   useEffect(() => {
     reflashData();
@@ -120,7 +65,7 @@ const LayoutEnroll: FC<LayoutEnrollProps> = () => {
           <Button onClick={reflashData}>刷新数据</Button>
         </div>
       </div>
-      <Table columns={columns} dataSource={infoData} rowKey="id" />
+      <HomeTable infoData={infoData} />
     </EnrollWrapper>
   );
 };

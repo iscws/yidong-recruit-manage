@@ -20,3 +20,12 @@ export function getItem(
     label
   } as MenuItemType;
 }
+
+// 将毫秒转化为 YY-MM-DD的格式
+export function formatDate(dateObj: Date) {
+  const year = dateObj.getFullYear().toString();
+  const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+  const date = dateObj.getDate().toString().padStart(2, '0');
+
+  return `${year}-${month}-${date}`;
+}

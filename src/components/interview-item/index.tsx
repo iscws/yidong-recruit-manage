@@ -28,9 +28,10 @@ interface IProps {
 }
 
 const InterviewItem: FC<IProps> = ({ infoData }) => {
-  const [isDelete, setIsDelete] = useState(false);
+  const [isDelete, setIsDelete] = useState<boolean>(false);
   const [isAppoint, setIsAppoint] = useState<boolean>(false);
   const [isDefault, setIsDefault] = useState(infoData.isdefalut ?? false);
+
   const params = useParams();
   const deleteItem = async () => {
     if (!isDefault) {
@@ -127,6 +128,13 @@ const InterviewItem: FC<IProps> = ({ infoData }) => {
             rules={[{ required: true, message: '请填写名额' }]}
           >
             <Input type="number" />
+          </Form.Item>
+
+          <Form.Item
+            label="剩余名额"
+            rules={[{ required: true, message: '请填写名额' }]}
+          >
+            <Input type="number" value={infoData.spareQuota} />
           </Form.Item>
 
           <Form.Item

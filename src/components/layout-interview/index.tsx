@@ -1,102 +1,52 @@
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import type { FC, ReactNode } from 'react';
-import { userEnrollType } from '@/type';
+import { interviewTime } from '@/type';
 import { InterviewWrapper } from './style';
-import { useNavigate } from 'react-router-dom';
-import { getInterviewTime } from '@/service/api';
-import { Table, Button, Select } from 'antd';
+import { useParams } from 'react-router-dom';
+import {
+  getInterviewTimeDirec,
+  getRecruitTimeInfo,
+  getTodayInfoFront
+} from '@/service/api';
+import { Button, Select } from 'antd';
 // import { ColumnsType } from 'antd/es/table';
-import Mock from 'mockjs';
 
 interface LayoutInterProps {
   children?: ReactNode;
 }
+interface item {
+  id: number;
+  date: string;
+}
 
 const LayoutInter: FC<LayoutInterProps> = () => {
-  const navigate = useNavigate();
-  // const params = useParams();
-  const [interviewList, setInterviewList] = useState<userEnrollType[]>([]);
-  // const [interviewing, setinterviewing] = useState<userEnrollType[]>([]);
-  // 获取面试数据
+  const params = useParams();
+  const [dateList, setDateList] = useState<item[]>([]);
+  // console.log('渲染一次');
+
   useEffect(() => {
-    getInterviewTime().then((res) => {
+    console.log(params.direction);
+    // 获取今天日期
+    getTodayInfoFront().then((res) => {
       console.log(res);
     });
-    // const columns: ColumnsType<userEnrollType> = [
-    //   {
-    //     title: '名字',
-    //     dataIndex: 'username',
-    //     key: 'username',
-    //     filterMode: 'tree'
-    //   },
-    //   {
-    //     title: '性别',
-    //     key: 'sex',
-    //     dataIndex: 'sex'
-    //   },
-    //   {
-    //     title: '学号',
-    //     key: 'studentId',
-    //     dataIndex: 'studentId'
-    //   },
-    //   {
-    //     title: '手机号码',
-    //     key: 'phone',
-    //     dataIndex: 'phone'
-    //   },
-    //   {
-    //     title: '学院',
-    //     key: 'college',
-    //     dataIndex: 'college'
-    //   },
-    //   {
-    //     title: '专业',
-    //     key: 'major',
-    //     dataIndex: 'major'
-    //   },
-    //   {
-    //     title: '状态',
-    //     key: 'status',
-    //     dataIndex: 'status'
-    //   },
-    //   {
-    //     title: '进入详情',
-    //     key: 'index',
-    //     render: (record: userEnrollType) => {
-    //       return (
-    //         <Button onClick={() => toUserDetail(record)} type="primary">
-    //           进入详情
-    //         </Button>
-    //       );
-    //     }
-    //   }
-    // ];
-    const mock = Mock.mock({
-      'data|20': [
-        {
-          id: '@natural(1,20)',
-          username: '@cname',
-          'sex|1-2': 1,
-          studentId: '@ID',
-          phone: '@integer',
-          college: '@ctitle',
-          major: '@cword(2,8)',
-          introduction: '@cparagraph',
-          status: '@ctitle',
-          interviewTime: '@ctitle',
-          assess: '@boolean'
-        }
-      ]
+    // 和数组内的元素进行筛选，如果有重合的部分则直接展示
+
+    getInterviewTimeDirec(Number(params.direction)).then((res) => {
+      const listData = res.data as interviewTime[];
+      const list = listData.map((item) => {
+        const date = item.startTime.split(' ')[0];
+        return { id: item.id as number, date: date };
+      });
+      setDateList(list);
     });
-    setInterviewList(mock.data);
   }, []);
 
-  // 进入用户详情页
-  const toUserDetail = useCallback((record: userEnrollType) => {
-    navigate(`/detail/${record.id}`);
-  }, []);
-  const handleChange = (value: string) => {
+  const handleChange = (value: number) => {
     console.log(`selected ${value}`);
+    getRecruitTimeInfo(value).then((res) => {
+      console.log(res);
+    });
   };
   return (
     <InterviewWrapper>
@@ -106,28 +56,15 @@ const LayoutInter: FC<LayoutInterProps> = () => {
           defaultActiveFirstOption
           style={{ width: 240 }}
           onChange={handleChange}
-          options={[
-            { value: 1, label: '2023-04-03' },
-            { value: 2, label: '2023-04-10' },
-            { value: 3, label: '2023-04-11' },
-            { value: 4, label: '2023-04-12' }
-          ]}
+          fieldNames={{
+            label: 'date',
+            value: 'id'
+          }}
+          options={dateList}
         />
       </div>
       <div className="header">正在面试 Interviewing</div>
-      <Table
-        pagination={false}
-        dataSource={[interviewList[0]]}
-        rowKey="studentId"
-        onRow={(record) => {
-          return {
-            onDoubleClick: () => {
-              console.log('record:', record);
-              toUserDetail(record);
-            }
-          };
-        }}
-      />
+
       <div className="btnbox">
         <Button size="large" className="next-btn" type="primary">
           下一位
@@ -135,18 +72,6 @@ const LayoutInter: FC<LayoutInterProps> = () => {
       </div>
 
       <div className="header">待面试队列 Waiting</div>
-      <Table
-        dataSource={interviewList}
-        rowKey="studentId"
-        onRow={(record) => {
-          return {
-            onDoubleClick: () => {
-              console.log('record:', record);
-              toUserDetail(record);
-            }
-          };
-        }}
-      />
     </InterviewWrapper>
   );
 };

@@ -107,3 +107,16 @@ export function editPreRecruitTime(time: number) {
     url: `/api/admin/changeRecruitTime/${time}`
   });
 }
+
+// 获取该面试时间的信息
+export function getRecruitTimeInfo(id: number) {
+  return request.get({
+    url: `/api/admin/getThisTimeDelInfo/${id}`
+  });
+}
+// 获取当天面试时间
+export function getTodayInfoFront() {
+  return request.get({
+    url: `/api/admin/getThisDayTime_1`
+  });
+}
