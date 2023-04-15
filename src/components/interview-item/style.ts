@@ -29,5 +29,10 @@ export const ItemWrapper = styled.div`
         background-color: rgba(0, 0, 0, 0.2);
       }
     }
+
+    .btnArea {
+      display: flex;
+      justify-content: space-between;
+    }
   }
 `;

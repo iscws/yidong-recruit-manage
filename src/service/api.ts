@@ -115,8 +115,18 @@ export function getRecruitTimeInfo(id: number) {
   });
 }
 // 获取当天面试时间
-export function getTodayInfoFront() {
+export function getTodayInfo(direction: number) {
   return request.get({
-    url: `/api/admin/getThisDayTime_1`
+    url: `/api/admin/getThisDayTime/${direction}`
+  });
+}
+
+// 填写用户的评价
+export function setUserAssess(id: number, assess: string) {
+  return request.get({
+    url: `/api/admin/setAssess/${id}`,
+    params: {
+      assess
+    }
   });
 }

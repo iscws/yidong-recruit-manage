@@ -2,7 +2,8 @@ import styled from 'styled-components';
 
 export const DetailWrapper = styled.div`
   width: 1200px;
-  min-height: 100vh;
+  min-height: 400px;
+  max-height: 1200px;
   margin: 0 auto;
   padding: 20px;
   box-sizing: border-box;

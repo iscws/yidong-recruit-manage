@@ -13,7 +13,7 @@ import {
   FloatButton,
   Modal
 } from 'antd';
-import { getUserInfoById } from '@/service/api';
+import { getUserInfoById, setUserAssess } from '@/service/api';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeftOutlined,
@@ -23,6 +23,7 @@ import {
   ExclamationCircleFilled
 } from '@ant-design/icons';
 import { MenuType, userEnrollType } from '@/type';
+import { useThrottle } from '@/hooks/useThrottle';
 
 interface DetailProps {
   children?: ReactNode;
@@ -65,7 +66,6 @@ const Detail: FC<DetailProps> = () => {
   const { confirm } = Modal;
   useEffect(() => {
     getUserInfoById(Number(params.id)).then((res) => {
-      console.log(res.data);
       setCurrent(stepsMap.get(res.data.status) as number);
       setBasicInfo(res.data);
     });
@@ -74,7 +74,17 @@ const Detail: FC<DetailProps> = () => {
   const navigateTo = ({ type }: MenuType) => {
     naviagate(`/home/${type}/1`);
   };
-
+  const submitAssess = useThrottle((e) => {
+    if (e.assess !== basicInfo?.assess) {
+      setUserAssess(Number(params.id), e.assess).then((res) => {
+        res.code === 200
+          ? message.success(res.message)
+          : message.error(res.message);
+      });
+    } else {
+      message.warning('没有做任何修改！');
+    }
+  }, 1000);
   const showConfirm = () => {
     confirm({
       title: '你确定要切换状态吗？',
@@ -159,23 +169,32 @@ const Detail: FC<DetailProps> = () => {
 
         <div className="card-item assess">
           <Card title="面评">
-            <Form name="assess" className="assess-area">
-              <Form.Item
-                name="intro"
-                rules={[{ required: true, message: '请至少写一个字' }]}
+            {basicInfo !== null && (
+              <Form
+                name="assess"
+                className="assess-area"
+                onFinish={submitAssess}
               >
-                <Input.TextArea
-                  showCount
-                  maxLength={400}
-                  style={{ height: '40vh' }}
-                  placeholder="这位同学基础怎么说"
-                />
-              </Form.Item>
+                <Form.Item
+                  name="assess"
+                  initialValue={basicInfo?.assess}
+                  rules={[{ required: true, message: '请至少写一个字' }]}
+                >
+                  <Input.TextArea
+                    showCount
+                    maxLength={400}
+                    style={{ height: '40vh' }}
+                    placeholder="这位同学基础怎么说"
+                  />
+                </Form.Item>
 
-              <Form.Item style={{ textAlign: 'right' }}>
-                <Button htmlType="submit">提交</Button>
-              </Form.Item>
-            </Form>
+                <Form.Item style={{ textAlign: 'right' }}>
+                  <Button htmlType="submit" disabled={current < 3}>
+                    提交
+                  </Button>
+                </Form.Item>
+              </Form>
+            )}
           </Card>
         </div>
 

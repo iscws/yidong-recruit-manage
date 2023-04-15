@@ -55,8 +55,6 @@ const LayoutEdit: FC<LayoutEditProps> = () => {
   // 获取面试数据
   useEffect(() => {
     getInterviewTimeDirec(Number(params.direction)).then((res) => {
-      console.log(res);
-
       setInfoData(res.data);
     });
 
