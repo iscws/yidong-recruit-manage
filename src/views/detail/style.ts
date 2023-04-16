@@ -32,6 +32,7 @@ export const DetailWrapper = styled.div`
       /* height: 10vh; */
       display: flex;
       align-items: center;
+      margin-bottom: 24px;
     }
   }
 `;

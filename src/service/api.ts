@@ -156,3 +156,10 @@ export function nextInterview(id: number, uid?: number) {
         url: `/api/admin/getNext/${id}/${uid}`
       });
 }
+
+// 发送消息
+export function pushInterview(id: number) {
+  return request.post({
+    url: `/api/admin/push/interview/${id}`
+  });
+}

@@ -107,12 +107,10 @@ const Detail: FC<DetailProps> = () => {
           bordered={true}
           column={2}
         >
-          <Descriptions.Item label="姓名" span={2}>
+          <Descriptions.Item label="姓名">
             {basicInfo?.username}
           </Descriptions.Item>
-          <Descriptions.Item label="电话" span={2}>
-            {basicInfo?.phone}
-          </Descriptions.Item>
+          <Descriptions.Item label="电话">{basicInfo?.phone}</Descriptions.Item>
           <Descriptions.Item label="性别">
             <Radio.Group value={basicInfo?.sex === '男' ? 1 : 2}>
               <Radio value={1}>男</Radio>

@@ -10,6 +10,7 @@ interface IProps {
   infoData: userEnrollType[];
   showHeader?: boolean;
   loading?: boolean;
+  pagination?: boolean;
 }
 
 const HomeTable: FC<IProps> = (props) => {
@@ -76,6 +77,7 @@ const HomeTable: FC<IProps> = (props) => {
         rowKey="id"
         showHeader={showHeader}
         loading={props?.loading}
+        pagination={false}
       />
     </>
   );

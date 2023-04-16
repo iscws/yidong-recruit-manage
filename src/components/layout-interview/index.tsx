@@ -7,7 +7,8 @@ import {
   getInterviewTimeDirec,
   getIsInterviewByid,
   getRecruitTimeInfo,
-  nextInterview
+  nextInterview,
+  pushInterview
 } from '@/service/api';
 import { Button, message, Select } from 'antd';
 import HomeTable from '../home-table';
@@ -37,7 +38,7 @@ const LayoutInter: FC<LayoutInterProps> = () => {
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
-      let innerCurrId: any = undefined;
+      let innerCurrId: number | undefined = undefined;
       let innerTimeList: item[] = [];
 
       // 将获取过来的面试时间转化为 select组件需要的格式
@@ -46,7 +47,7 @@ const LayoutInter: FC<LayoutInterProps> = () => {
         innerTimeList = listData.map((item) => {
           const date = item.startTime;
           if (date.split(' ')[0] === formatDate(new Date()))
-            innerCurrId = item.id;
+            innerCurrId = item.id as number;
 
           return { id: item.id as number, date: date };
         });
@@ -63,26 +64,41 @@ const LayoutInter: FC<LayoutInterProps> = () => {
     fetchData();
   }, [params]);
 
-  const handleChange = (value: number) => {
-    setCurrId(value);
-    setLoading(true);
+  const handleChange = async (value: number | undefined) => {
+    if (typeof value === 'number') {
+      setCurrId(value);
+      setLoading(true);
+      getRecruitTimeInfo(value).then(({ code, data }) => {
+        code === 200 ? setQueueList(data.info) : setQueueList([]);
+        setLoading(false);
+      });
+      // 获取正在面试的队列
+      await getIsInterviewByid(value).then((res) => {
+        console.log('正在面试', res);
 
-    getRecruitTimeInfo(value).then(({ code, data }) => {
-      code === 200 ? setQueueList(data.info) : setQueueList([]);
-      setLoading(false);
-    });
-    // 获取正在面试的队列
-    getIsInterviewByid(value).then((res) => {
-      console.log(res);
-
-      res.code === 200 ? setIsInterview([res.data]) : setIsInterview([]);
-    });
+        res.code === 200 ? setIsInterview([res.data]) : setIsInterview([]);
+        res.data !== null
+          ? (isInterviewId.current = res.data.id)
+          : (isInterviewId.current = undefined);
+      });
+    } else return;
   };
 
   const nextOne = useThrottle(() => {
-    console.log('下一位');
     nextInterview(currId as number, isInterviewId.current).then((res) => {
-      console.log(res);
+      if (res.code === 200) {
+        handleChange(currId).then(() => {
+          console.log(isInterviewId.current);
+          isInterviewId.current !== undefined &&
+            pushInterview(isInterviewId.current).then((res) => {
+              console.log(res);
+            });
+        });
+        message.success('修改成功~');
+      } else {
+        message.error(res.message);
+        console.log(res);
+      }
     });
   }, 2000);
   return (
@@ -102,7 +118,12 @@ const LayoutInter: FC<LayoutInterProps> = () => {
         />
       </div>
       <div className="header">正在面试 Interviewing</div>
-      <HomeTable infoData={isInterview} showHeader={false} loading={loading} />
+      <HomeTable
+        infoData={isInterview}
+        showHeader={false}
+        loading={loading}
+        pagination={false}
+      />
       <div className="btnbox">
         <Button
           size="large"
