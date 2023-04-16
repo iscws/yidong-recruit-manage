@@ -12,6 +12,7 @@ const Detail = withAuth(lazy(() => import('@/views/detail')));
 const Edit = withAuth(lazy(() => import('@/components/layout-edit')));
 const Enroll = withAuth(lazy(() => import('@/components/layout-enroll')));
 const Interview = withAuth(lazy(() => import('@/components/layout-interview')));
+
 const LazyLoad = (children: ReactNode) => {
   return (
     <Suspense fallback={<Skeleton active style={{ marginTop: '25px' }} />}>

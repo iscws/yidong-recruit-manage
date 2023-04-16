@@ -6,6 +6,10 @@ export const InterviewWrapper = styled.div`
     clear: both;
     content: '';
   }
+  .select-time {
+    margin-bottom: 20px;
+    font-weight: 700;
+  }
   .next-btn {
     margin: 10px 10px 10px 0;
     width: 100px;

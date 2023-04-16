@@ -9,6 +9,7 @@ interface IProps {
   children?: ReactNode;
   infoData: userEnrollType[];
   showHeader?: boolean;
+  loading?: boolean;
 }
 
 const HomeTable: FC<IProps> = (props) => {
@@ -74,6 +75,7 @@ const HomeTable: FC<IProps> = (props) => {
         dataSource={props.infoData}
         rowKey="id"
         showHeader={showHeader}
+        loading={props?.loading}
       />
     </>
   );

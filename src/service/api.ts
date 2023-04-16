@@ -130,3 +130,29 @@ export function setUserAssess(id: number, assess: string) {
     }
   });
 }
+/**
+ *  获取当前面试时间的面试情况
+ * @param id 面试时间id
+ */
+
+export function getIsInterviewByid(id: number) {
+  return request.get({
+    url: `/api/admin/getNow/${id}`
+  });
+}
+
+/**
+ * 下一位面试者
+ * @param id 面试时间
+ * @param uid 上一位用户id
+ */
+
+export function nextInterview(id: number, uid?: number) {
+  return uid === undefined
+    ? request.get({
+        url: `/api/admin/getNext/${id}/0`
+      })
+    : request.get({
+        url: `/api/admin/getNext/${id}/${uid}`
+      });
+}

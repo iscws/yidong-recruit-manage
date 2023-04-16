@@ -1,15 +1,17 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useState, useRef } from 'react';
 import type { FC, ReactNode } from 'react';
 import { interviewTime, userEnrollType } from '@/type';
 import { InterviewWrapper } from './style';
 import { useParams } from 'react-router-dom';
 import {
   getInterviewTimeDirec,
+  getIsInterviewByid,
   getRecruitTimeInfo,
-  getTodayInfo
+  nextInterview
 } from '@/service/api';
-import { Button, Select } from 'antd';
+import { Button, message, Select } from 'antd';
 import HomeTable from '../home-table';
+import { useThrottle } from '@/hooks/useThrottle';
 import { formatDate } from '@/utils';
 // import { ColumnsType } from 'antd/es/table';
 
@@ -23,95 +25,97 @@ interface item {
 
 const LayoutInter: FC<LayoutInterProps> = () => {
   const params = useParams();
+  const isInterviewId = useRef<undefined | number>(undefined);
+
   const [dateList, setDateList] = useState<item[]>([]);
   const [currId, setCurrId] = useState<number | undefined>(undefined);
   const [queueList, setQueueList] = useState<userEnrollType[]>([]);
-  const [isInterview] = useState<userEnrollType[]>([]);
+  // 正在面试的队列
+  const [isInterview, setIsInterview] = useState<userEnrollType[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
-      let innerCurrId = -1;
-      let innerQuene = [];
+      setLoading(true);
+      let innerCurrId: any = undefined;
       let innerTimeList: item[] = [];
-      // 获取今天日期
-      const todayInfo = await getTodayInfo(Number(params.direction)).then(
-        (res) => {
-          console.log(res);
 
-          return res.data;
-        }
-      );
-      console.log(todayInfo);
-      // 将当天数据传入队列当中
-      if (todayInfo !== null && todayInfo.info !== null) {
-        innerQuene = todayInfo.info;
-      } else {
-        innerTimeList.push({
-          id: -1,
-          date: formatDate(new Date())
-        });
-      }
-
-      // 和数组内的元素进行筛选，如果有重合的部分则直接展示
+      // 将获取过来的面试时间转化为 select组件需要的格式
       await getInterviewTimeDirec(Number(params.direction)).then((res) => {
         const listData = res.data as interviewTime[];
-        const list = listData.map((item) => {
+        innerTimeList = listData.map((item) => {
           const date = item.startTime;
-          if (todayInfo !== null && todayInfo.id === item.id) {
-            innerCurrId = item.id as number;
-          }
+          if (date.split(' ')[0] === formatDate(new Date()))
+            innerCurrId = item.id;
+
           return { id: item.id as number, date: date };
         });
-        innerTimeList = [...list, ...innerTimeList];
       });
+      innerCurrId === undefined &&
+        message.warning('今天暂无面试,请选择其他日期');
 
-      setQueueList(innerQuene);
+      // 加载数据
+      handleChange(innerCurrId);
+
       setDateList(innerTimeList);
-      setCurrId(innerCurrId);
+      setLoading(false);
     }
     fetchData();
   }, [params]);
 
   const handleChange = (value: number) => {
-    console.log(`selected ${value}`);
-    getRecruitTimeInfo(value).then(({ code, data }) => {
-      console.log(data);
+    setCurrId(value);
+    setLoading(true);
 
-      if (code === 200) {
-        setQueueList(data.info);
-      } else {
-        setQueueList([]);
-      }
+    getRecruitTimeInfo(value).then(({ code, data }) => {
+      code === 200 ? setQueueList(data.info) : setQueueList([]);
+      setLoading(false);
+    });
+    // 获取正在面试的队列
+    getIsInterviewByid(value).then((res) => {
+      console.log(res);
+
+      res.code === 200 ? setIsInterview([res.data]) : setIsInterview([]);
     });
   };
+
+  const nextOne = useThrottle(() => {
+    console.log('下一位');
+    nextInterview(currId as number, isInterviewId.current).then((res) => {
+      console.log(res);
+    });
+  }, 2000);
   return (
     <InterviewWrapper>
       <div className="select-time">
-        <div>选择日期：</div>
-        {currId !== undefined && (
-          <Select
-            defaultValue={currId}
-            defaultActiveFirstOption
-            style={{ width: 240 }}
-            onChange={handleChange}
-            fieldNames={{
-              label: 'date',
-              value: 'id'
-            }}
-            options={dateList}
-          />
-        )}
+        <span>选择日期：</span>
+        <Select
+          value={currId}
+          defaultActiveFirstOption
+          style={{ width: 240 }}
+          onChange={handleChange}
+          fieldNames={{
+            label: 'date',
+            value: 'id'
+          }}
+          options={dateList}
+        />
       </div>
       <div className="header">正在面试 Interviewing</div>
-      <HomeTable infoData={isInterview} showHeader={false} />
+      <HomeTable infoData={isInterview} showHeader={false} loading={loading} />
       <div className="btnbox">
-        <Button size="large" className="next-btn" type="primary">
+        <Button
+          size="large"
+          className="next-btn"
+          type="dashed"
+          onClick={nextOne}
+        >
           下一位
         </Button>
       </div>
 
       <div className="header">待面试队列 Waiting</div>
-      <HomeTable infoData={queueList} showHeader={false} />
+      <HomeTable infoData={queueList} showHeader={false} loading={loading} />
     </InterviewWrapper>
   );
 };
