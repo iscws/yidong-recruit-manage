@@ -8,7 +8,8 @@ import {
   getIsInterviewByid,
   getRecruitTimeInfo,
   nextInterview,
-  pushInterview
+  pushInterview,
+  setStatus
 } from '@/service/api';
 import { Button, message, Select } from 'antd';
 import HomeTable from '../home-table';
@@ -29,7 +30,9 @@ const LayoutInter: FC<LayoutInterProps> = () => {
   const isInterviewId = useRef<undefined | number>(undefined);
 
   const [dateList, setDateList] = useState<item[]>([]);
-  const [currId, setCurrId] = useState<number | undefined>(undefined);
+  const [interviewTimeId, setInterviewTimeId] = useState<number | undefined>(
+    undefined
+  );
   const [queueList, setQueueList] = useState<userEnrollType[]>([]);
   // 正在面试的队列
   const [isInterview, setIsInterview] = useState<userEnrollType[]>([]);
@@ -38,7 +41,7 @@ const LayoutInter: FC<LayoutInterProps> = () => {
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
-      let innerCurrId: number | undefined = undefined;
+      let innerInterviewTimeId: number | undefined = undefined;
       let innerTimeList: item[] = [];
 
       // 将获取过来的面试时间转化为 select组件需要的格式
@@ -47,16 +50,16 @@ const LayoutInter: FC<LayoutInterProps> = () => {
         innerTimeList = listData.map((item) => {
           const date = item.startTime;
           if (date.split(' ')[0] === formatDate(new Date()))
-            innerCurrId = item.id as number;
+            innerInterviewTimeId = item.id as number;
 
           return { id: item.id as number, date: date };
         });
       });
-      innerCurrId === undefined &&
+      innerInterviewTimeId === undefined &&
         message.warning('今天暂无面试,请选择其他日期');
 
       // 加载数据
-      handleChange(innerCurrId);
+      handleChange(innerInterviewTimeId);
 
       setDateList(innerTimeList);
       setLoading(false);
@@ -66,7 +69,7 @@ const LayoutInter: FC<LayoutInterProps> = () => {
 
   const handleChange = async (value: number | undefined) => {
     if (typeof value === 'number') {
-      setCurrId(value);
+      setInterviewTimeId(value);
       setLoading(true);
       getRecruitTimeInfo(value).then(({ code, data }) => {
         code === 200 ? setQueueList(data.info) : setQueueList([]);
@@ -84,17 +87,28 @@ const LayoutInter: FC<LayoutInterProps> = () => {
     } else return;
   };
 
-  const nextOne = useThrottle(() => {
-    nextInterview(currId as number, isInterviewId.current).then((res) => {
+  const nextOne = useThrottle(async () => {
+    // 如果此时有同学正在面试，则将他的面试状态修改为结束
+    if (isInterviewId.current !== undefined) {
+      await setStatus(isInterviewId.current, 6).then((res) => {
+        console.log(res);
+        res.code === 200 && message.success('已结束面试中同学的状态~');
+      });
+      handleChange(interviewTimeId);
+      return;
+    }
+    nextInterview(interviewTimeId as number).then((res) => {
       if (res.code === 200) {
-        handleChange(currId).then(() => {
+        handleChange(interviewTimeId).then(() => {
           console.log(isInterviewId.current);
           isInterviewId.current !== undefined &&
             pushInterview(isInterviewId.current).then((res) => {
               console.log(res);
+              res.code === 200
+                ? message.success('修改成功~')
+                : message.warning('该同学没有授权消息推送，请手动提醒');
             });
         });
-        message.success('修改成功~');
       } else {
         message.error(res.message);
         console.log(res);
@@ -106,7 +120,7 @@ const LayoutInter: FC<LayoutInterProps> = () => {
       <div className="select-time">
         <span>选择日期：</span>
         <Select
-          value={currId}
+          value={interviewTimeId}
           defaultActiveFirstOption
           style={{ width: 240 }}
           onChange={handleChange}

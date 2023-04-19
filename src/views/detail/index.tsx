@@ -13,7 +13,7 @@ import {
   FloatButton,
   Modal
 } from 'antd';
-import { getUserInfoById, setUserAssess } from '@/service/api';
+import { getUserInfoById, setStatus, setUserAssess } from '@/service/api';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeftOutlined,
@@ -30,33 +30,33 @@ interface DetailProps {
 }
 const steps = [
   {
-    key: 0,
+    key: 2,
     title: '报名成功'
   },
   {
-    key: 1,
+    key: 3,
     title: '等待面试'
   },
   {
-    key: 2,
+    key: 4,
     title: '排队中'
   },
   {
-    key: 3,
+    key: 5,
     title: '面试中'
   },
   {
-    key: 4,
+    key: 6,
     title: '面试结束'
   }
 ];
 
 const stepsMap = new Map([
-  ['报名成功', 0],
-  ['等待面试', 1],
-  ['排队中', 2],
-  ['面试中', 3],
-  ['面试结束', 4]
+  ['报名成功', 2],
+  ['等待面试排队', 3],
+  ['排队中', 4],
+  ['面试中', 5],
+  ['面试结束', 6]
 ]);
 const Detail: FC<DetailProps> = () => {
   const [basicInfo, setBasicInfo] = useState<userEnrollType | null>(null);
@@ -64,8 +64,21 @@ const Detail: FC<DetailProps> = () => {
   const [current, setCurrent] = useState(0);
   const naviagate = useNavigate();
   const { confirm } = Modal;
+
+  const nextStatus = useThrottle(() => {
+    console.log(current);
+    setStatus(basicInfo?.id as number, current + 1).then((res) => {
+      console.log(res);
+      if (res.code === 200) {
+        message.success(res.message);
+        setCurrent(current + 1);
+      }
+    });
+  }, 3000);
   useEffect(() => {
     getUserInfoById(Number(params.id)).then((res) => {
+      console.log(stepsMap.get(res.data.status));
+
       setCurrent(stepsMap.get(res.data.status) as number);
       setBasicInfo(res.data);
     });
@@ -91,11 +104,13 @@ const Detail: FC<DetailProps> = () => {
       content: '请确保该状态已经结束',
       icon: <ExclamationCircleFilled />,
       onOk() {
-        setCurrent(current + 1);
+        nextStatus();
       },
       onCancel() {
         console.log('Cancel');
-      }
+      },
+      okText: '确定',
+      cancelText: '取消'
     });
   };
   return (
@@ -136,7 +151,7 @@ const Detail: FC<DetailProps> = () => {
         <div className="card-item status">
           <Card title="当前状态">
             <Steps
-              current={current}
+              current={current - 2}
               items={steps.map((item) => ({
                 key: item.title,
                 title: item.title
@@ -144,16 +159,15 @@ const Detail: FC<DetailProps> = () => {
               className="step-area"
             />
             <div style={{ marginTop: 24 }}>
-              {current < steps.length - 1 && (
-                <Button
-                  type="primary"
-                  onClick={() => showConfirm()}
-                  disabled={current <= 1}
-                >
-                  下一个状态
-                </Button>
-              )}
-              {current === steps.length - 1 && (
+              <Button
+                type="primary"
+                onClick={() => showConfirm()}
+                disabled={current <= 3}
+              >
+                下一个状态
+              </Button>
+
+              {current === 8 && (
                 <Button
                   type="primary"
                   onClick={() => message.success('Processing complete!')}

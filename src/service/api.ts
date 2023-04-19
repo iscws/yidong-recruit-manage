@@ -45,8 +45,8 @@ export async function refreshToken() {
 
 // 更改面试基本信息
 export function updateInterviewInfo(props: interviewTime) {
-  return request.post({
-    url: '/api/admin/updateTime',
+  return request.put({
+    url: '/api/admin/interview',
     data: props
   });
 }
@@ -54,7 +54,7 @@ export function updateInterviewInfo(props: interviewTime) {
 // 新增面试时间
 export function addNewInterview(props: interviewTime) {
   return request.post({
-    url: '/api/admin/addTime',
+    url: '/api/admin/interview',
     data: props
   });
 }
@@ -103,7 +103,7 @@ export function getPreRecruitTime() {
 
 // 更改多少分钟之前能预约
 export function editPreRecruitTime(time: number) {
-  return request.get({
+  return request.put({
     url: `/api/admin/changeRecruitTime/${time}`
   });
 }
@@ -111,13 +111,7 @@ export function editPreRecruitTime(time: number) {
 // 获取该面试时间的信息
 export function getRecruitTimeInfo(id: number) {
   return request.get({
-    url: `/api/admin/getThisTimeDelInfo/${id}`
-  });
-}
-// 获取当天面试时间
-export function getTodayInfo(direction: number) {
-  return request.get({
-    url: `/api/admin/getThisDayTime/${direction}`
+    url: `/api/admin/getThisTime/${id}`
   });
 }
 
@@ -132,7 +126,7 @@ export function setUserAssess(id: number, assess: string) {
 }
 /**
  *  获取当前面试时间的面试情况
- * @param id 面试时间id
+ * @param  id 面试时间id
  */
 
 export function getIsInterviewByid(id: number) {
@@ -142,24 +136,33 @@ export function getIsInterviewByid(id: number) {
 }
 
 /**
- * 下一位面试者
- * @param id 面试时间
- * @param uid 上一位用户id
+ * 将下一位排队者改为面试中
+ * @param  id 面试时间
  */
-
-export function nextInterview(id: number, uid?: number) {
-  return uid === undefined
-    ? request.get({
-        url: `/api/admin/getNext/${id}/0`
-      })
-    : request.get({
-        url: `/api/admin/getNext/${id}/${uid}`
-      });
+export function nextInterview(id: number) {
+  return request.get({
+    url: `/api/admin/getNext/${id}`
+  });
 }
 
-// 发送消息
+/**
+ *发送消息提醒面试
+ * @param  id 用户id
+ */
 export function pushInterview(id: number) {
   return request.post({
     url: `/api/admin/push/interview/${id}`
+  });
+}
+
+/**
+ * 修改用户状态
+ * @param id 用户id
+ * @param status 需要修改的用户状态
+ * @returns
+ */
+export function setStatus(id: number, status: number) {
+  return request.put({
+    url: `/api/admin/setStatus/${id}/${status}`
   });
 }

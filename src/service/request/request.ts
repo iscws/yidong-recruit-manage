@@ -93,6 +93,9 @@ class Request {
   delete<T = eAxiosResponse>(config: AxiosRequestConfig) {
     return this.request<T>({ ...config, method: 'DELETE' });
   }
+  put<T = eAxiosResponse>(config: AxiosRequestConfig) {
+    return this.request<T>({ ...config, method: 'PUT' });
+  }
 }
 
 export default Request;
