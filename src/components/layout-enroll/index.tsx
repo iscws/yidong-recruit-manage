@@ -12,7 +12,6 @@ import {
 } from '@/service/api';
 import { useThrottle } from '@/hooks/useThrottle';
 import HomeTable from '../home-table';
-import { check } from 'prettier';
 
 interface LayoutEnrollProps {
   children?: ReactNode;
