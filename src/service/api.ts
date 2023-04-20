@@ -166,3 +166,23 @@ export function setStatus(id: number, status: number) {
     url: `/api/admin/setStatus/${id}/${status}`
   });
 }
+/**
+ *
+ * @param isDisplay 是否展示报名页
+ * @param message 报名页返回内容
+ */
+export function changeDisplay(isDisplay: boolean, message = '暂不支持报名') {
+  return request.put({
+    url: `/api/admin/page/display`,
+    data: {
+      isDisplay,
+      message
+    }
+  });
+}
+
+export function getDisplay() {
+  return request.get({
+    url: `/api/recruit/display`
+  });
+}

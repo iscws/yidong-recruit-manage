@@ -1,12 +1,18 @@
 import React, { memo, useState, useEffect } from 'react';
 import type { FC, ReactNode } from 'react';
 import { searchType, userEnrollType } from '@/type';
-import { Button, Form, Input, message } from 'antd';
+import { Button, Form, Input, message, Switch } from 'antd';
 import { useParams } from 'react-router-dom';
 import { EnrollWrapper } from './style';
-import { getEnrollData, getSearchData } from '@/service/api';
+import {
+  changeDisplay,
+  getDisplay,
+  getEnrollData,
+  getSearchData
+} from '@/service/api';
 import { useThrottle } from '@/hooks/useThrottle';
 import HomeTable from '../home-table';
+import { check } from 'prettier';
 
 interface LayoutEnrollProps {
   children?: ReactNode;
@@ -14,7 +20,16 @@ interface LayoutEnrollProps {
 
 const LayoutEnroll: FC<LayoutEnrollProps> = () => {
   const [infoData, setInfoData] = useState<userEnrollType[]>([]);
+  const [switchCheck, setSwitchCheck] = useState(false);
   const params = useParams();
+
+  const switchChange = (checked: any, event: any) => {
+    console.log(checked, event);
+    changeDisplay(checked).then((res) => {
+      res.code === 200 && setSwitchCheck(checked);
+      console.log(res);
+    });
+  };
 
   // 搜索
   const searchFinish = useThrottle((value: searchType) => {
@@ -38,6 +53,10 @@ const LayoutEnroll: FC<LayoutEnrollProps> = () => {
   // 更新数据
   useEffect(() => {
     reflashData();
+    getDisplay().then((res) => {
+      res.code === 200 && setSwitchCheck(res.data.isDisplay);
+      console.log(res);
+    });
   }, [params]);
 
   const reflashData = () => {
@@ -60,6 +79,15 @@ const LayoutEnroll: FC<LayoutEnrollProps> = () => {
               </Button>
             </Form.Item>
           </Form>
+        </div>
+        <div className="switch">
+          是否开启报名：
+          <Switch
+            checkedChildren="开启"
+            unCheckedChildren="关闭"
+            checked={switchCheck}
+            onChange={switchChange}
+          />
         </div>
         <div className="btn">
           <Button onClick={reflashData}>刷新数据</Button>

@@ -59,7 +59,7 @@ const LayoutInter: FC<LayoutInterProps> = () => {
         message.warning('今天暂无面试,请选择其他日期');
 
       // 加载数据
-      handleChange(innerInterviewTimeId);
+      fetchList(innerInterviewTimeId);
 
       setDateList(innerTimeList);
       setLoading(false);
@@ -67,13 +67,22 @@ const LayoutInter: FC<LayoutInterProps> = () => {
     fetchData();
   }, [params]);
 
-  const handleChange = async (value: number | undefined) => {
+  useEffect(() => {
+    const timer = setInterval(() => {
+      fetchList(interviewTimeId, false);
+    }, 4000);
+    return () => {
+      clearInterval(timer);
+    };
+  }, [interviewTimeId]);
+  // 更新待面试队列和排队队列
+  const fetchList = async (value: number | undefined, forLoading = true) => {
     if (typeof value === 'number') {
       setInterviewTimeId(value);
-      setLoading(true);
+      forLoading === true && setLoading(true);
       getRecruitTimeInfo(value).then(({ code, data }) => {
         code === 200 ? setQueueList(data.info) : setQueueList([]);
-        setLoading(false);
+        forLoading === true && setLoading(false);
       });
       // 获取正在面试的队列
       await getIsInterviewByid(value).then((res) => {
@@ -94,12 +103,15 @@ const LayoutInter: FC<LayoutInterProps> = () => {
         console.log(res);
         res.code === 200 && message.success('已结束面试中同学的状态~');
       });
-      handleChange(interviewTimeId);
+    }
+    // 如果此时排队队列没人则刷新数据然后直接返回
+    if (queueList.length === 0) {
+      fetchList(interviewTimeId);
       return;
     }
     nextInterview(interviewTimeId as number).then((res) => {
       if (res.code === 200) {
-        handleChange(interviewTimeId).then(() => {
+        fetchList(interviewTimeId).then(() => {
           console.log(isInterviewId.current);
           isInterviewId.current !== undefined &&
             pushInterview(isInterviewId.current).then((res) => {
@@ -123,11 +135,14 @@ const LayoutInter: FC<LayoutInterProps> = () => {
           value={interviewTimeId}
           defaultActiveFirstOption
           style={{ width: 240 }}
-          onChange={handleChange}
+          onChange={(e) => {
+            fetchList(e, false);
+          }}
           fieldNames={{
             label: 'date',
             value: 'id'
           }}
+          loading={false}
           options={dateList}
         />
       </div>

@@ -5,6 +5,7 @@ export const EnrollWrapper = styled.div`
   .area {
     display: flex;
     justify-content: space-between;
+    /* align-items: center; */
     height: 30px;
     margin-bottom: 30px;
     .search-form {
@@ -24,5 +25,9 @@ export const EnrollWrapper = styled.div`
     color: #fff;
     background-color: rgba(0, 21, 41, 0.7);
     cursor: default;
+  }
+
+  .switch {
+    margin-top: 10px;
   }
 `;
