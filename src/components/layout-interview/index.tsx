@@ -9,7 +9,7 @@ import {
   getRecruitTimeInfo,
   nextInterview,
   pushInterview,
-  setStatus
+  setUserStatus
 } from '@/service/api';
 import { Button, message, Select } from 'antd';
 import HomeTable from '../home-table';
@@ -57,7 +57,11 @@ const LayoutInter: FC<LayoutInterProps> = () => {
         });
       });
       innerInterviewTimeId === undefined &&
-        message.warning('今天暂无面试,请选择其他日期');
+        message.warning(
+          `今天${
+            params.direction === '1' ? '前端' : '后端'
+          }暂无面试,请选择其他日期`
+        );
 
       // 加载数据
       fetchList(innerInterviewTimeId);
@@ -74,8 +78,6 @@ const LayoutInter: FC<LayoutInterProps> = () => {
   useEffect(() => {
     if (interviewTimeId !== undefined) {
       const timer = setInterval(() => {
-        console.log('轮询', interviewTimeId);
-
         fetchList(interviewTimeId, false);
       }, 4000);
       return () => {
@@ -118,7 +120,7 @@ const LayoutInter: FC<LayoutInterProps> = () => {
   const nextOne = useThrottle(async () => {
     // 如果此时有同学正在面试，则将他的面试状态修改为结束
     if (isInterviewId.current !== undefined) {
-      await setStatus(isInterviewId.current, 6).then((res) => {
+      await setUserStatus(isInterviewId.current, 6).then((res) => {
         console.log(res);
         res.code === 200 && message.success('已结束面试中同学的状态~');
       });

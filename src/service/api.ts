@@ -61,8 +61,8 @@ export function addNewInterview(props: interviewTime) {
 
 // 删除面试时间
 export function deleteInterviewTime(id: number) {
-  return request.get({
-    url: `/api/admin/deleteTime/${id}`
+  return request.delete({
+    url: `/api/admin/interview/${id}`
   });
 }
 
@@ -101,7 +101,10 @@ export function getPreRecruitTime() {
   });
 }
 
-// 更改多少分钟之前能预约
+/**
+ * 更改多少分钟之前能预约
+ * @param time 输入时间
+ */
 export function editPreRecruitTime(time: number) {
   return request.put({
     url: `/api/admin/changeRecruitTime/${time}`
@@ -117,7 +120,7 @@ export function getRecruitTimeInfo(id: number) {
 
 // 填写用户的评价
 export function setUserAssess(id: number, assess: string) {
-  return request.get({
+  return request.put({
     url: `/api/admin/setAssess/${id}`,
     params: {
       assess
@@ -161,7 +164,7 @@ export function pushInterview(id: number) {
  * @param status 需要修改的用户状态
  * @returns
  */
-export function setStatus(id: number, status: number) {
+export function setUserStatus(id: number, status: number) {
   return request.put({
     url: `/api/admin/setStatus/${id}/${status}`
   });

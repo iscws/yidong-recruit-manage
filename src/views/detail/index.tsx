@@ -8,79 +8,38 @@ import {
   Form,
   Input,
   Button,
-  Steps,
   message,
-  FloatButton,
-  Modal
+  FloatButton
 } from 'antd';
-import { getUserInfoById, setStatus, setUserAssess } from '@/service/api';
+import { getUserInfoById, setUserAssess } from '@/service/api';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeftOutlined,
   UserOutlined,
   UsergroupDeleteOutlined,
-  FundOutlined,
-  ExclamationCircleFilled
+  FundOutlined
 } from '@ant-design/icons';
 import { MenuType, userEnrollType } from '@/type';
 import { useThrottle } from '@/hooks/useThrottle';
+import DetailStatus from '@/components/detail-status';
 
 interface DetailProps {
   children?: ReactNode;
 }
-const steps = [
-  {
-    key: 2,
-    title: '报名成功'
-  },
-  {
-    key: 3,
-    title: '等待面试'
-  },
-  {
-    key: 4,
-    title: '排队中'
-  },
-  {
-    key: 5,
-    title: '面试中'
-  },
-  {
-    key: 6,
-    title: '面试结束'
-  }
-];
 
-const stepsMap = new Map([
-  ['报名成功', 2],
-  ['等待面试排队', 3],
-  ['排队中', 4],
-  ['面试中', 5],
-  ['面试结束', 6]
-]);
 const Detail: FC<DetailProps> = () => {
   const [basicInfo, setBasicInfo] = useState<userEnrollType | null>(null);
   const params = useParams();
-  const [current, setCurrent] = useState(0);
+  const [status, setStatus] = useState<string>('');
   const naviagate = useNavigate();
-  const { confirm } = Modal;
 
-  const nextStatus = useThrottle(() => {
-    console.log(current);
-    setStatus(basicInfo?.id as number, current + 1).then((res) => {
-      console.log(res);
-      if (res.code === 200) {
-        message.success(res.message);
-        setCurrent(current + 1);
-      }
-    });
-  }, 3000);
+  const changeStatusFn = (value: string) => {
+    setStatus(value);
+  };
   useEffect(() => {
     getUserInfoById(Number(params.id)).then((res) => {
-      console.log(stepsMap.get(res.data.status));
-
-      setCurrent(stepsMap.get(res.data.status) as number);
       setBasicInfo(res.data);
+      changeStatusFn(res.data.status);
     });
   }, []);
 
@@ -98,21 +57,6 @@ const Detail: FC<DetailProps> = () => {
       message.warning('没有做任何修改！');
     }
   }, 1000);
-  const showConfirm = () => {
-    confirm({
-      title: '你确定要切换状态吗？',
-      content: '请确保该状态已经结束',
-      icon: <ExclamationCircleFilled />,
-      onOk() {
-        nextStatus();
-      },
-      onCancel() {
-        console.log('Cancel');
-      },
-      okText: '确定',
-      cancelText: '取消'
-    });
-  };
   return (
     <DetailWrapper>
       <div className="basic-info">
@@ -149,36 +93,14 @@ const Detail: FC<DetailProps> = () => {
       </div>
       <div className="edit-info">
         <div className="card-item status">
-          <Card title="当前状态">
-            <Steps
-              current={current - 2}
-              items={steps.map((item) => ({
-                key: item.title,
-                title: item.title
-              }))}
-              className="step-area"
+          {status !== '' && (
+            <DetailStatus
+              status={status}
+              changeStatusFn={changeStatusFn}
+              id={Number(params.id)}
             />
-            <div style={{ marginTop: 24 }}>
-              <Button
-                type="primary"
-                onClick={() => showConfirm()}
-                disabled={current <= 3}
-              >
-                下一个状态
-              </Button>
-
-              {current === 8 && (
-                <Button
-                  type="primary"
-                  onClick={() => message.success('Processing complete!')}
-                >
-                  结束
-                </Button>
-              )}
-            </div>
-          </Card>
+          )}
         </div>
-
         <div className="card-item assess">
           <Card title="面评">
             {basicInfo !== null && (
@@ -201,15 +123,12 @@ const Detail: FC<DetailProps> = () => {
                 </Form.Item>
 
                 <Form.Item style={{ textAlign: 'right' }}>
-                  <Button htmlType="submit" disabled={current < 3}>
-                    提交
-                  </Button>
+                  <Button htmlType="submit">提交</Button>
                 </Form.Item>
               </Form>
             )}
           </Card>
         </div>
-
         <FloatButton.Group
           trigger="click"
           type="primary"

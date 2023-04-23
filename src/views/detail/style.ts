@@ -17,8 +17,8 @@ export const DetailWrapper = styled.div`
     border-radius: 10px;
   }
   .edit-info {
-    flex: 1;
     position: relative;
+    width: 60%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -27,6 +27,7 @@ export const DetailWrapper = styled.div`
     border-radius: 10px;
     .status {
       margin-bottom: 15px;
+      height: 140px;
     }
     .step-area {
       /* height: 10vh; */
