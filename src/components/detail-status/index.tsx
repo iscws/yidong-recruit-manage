@@ -1,9 +1,11 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useCallback } from 'react';
 import type { FC, ReactNode } from 'react';
 import { Button, message, Modal, Select } from 'antd';
 import { StatusWrapper } from './style';
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import { setUserStatus } from '@/service/api';
+import { setUserStatus, pushInterview } from '@/service/api';
+import { reverseMap } from '@/utils';
+import { useParams } from 'react-router-dom';
 
 interface IProps {
   children?: ReactNode;
@@ -43,6 +45,18 @@ const statusOptions = [
   {
     value: 8,
     label: '面试失败'
+  },
+  {
+    value: 9,
+    label: '考核中'
+  },
+  {
+    value: 10,
+    label: '考核成功'
+  },
+  {
+    value: 11,
+    label: '考核失败'
   }
 ];
 
@@ -53,26 +67,48 @@ const stepsMap = new Map([
   ['面试中', 5],
   ['面试结束', 6],
   ['面试通过', 7],
-  ['面试失败', 8]
+  ['面试失败', 8],
+  ['考核中', 9],
+  ['考核成功', 10],
+  ['考核失败', 11]
 ]);
 
-const stepsMapReverse = new Map([
-  [0, '暂未排队'],
-  [2, '报名成功'],
-  [3, '等待面试排队'],
-  [4, '排队中'],
-  [5, '面试中'],
-  [6, '面试结束'],
-  [7, '面试通过'],
-  [8, '面试失败']
-]);
+// 翻转key和value
+const stepsMapReverse = reverseMap(stepsMap);
 
 const DetailStatus: FC<IProps> = ({ status, changeStatusFn, id }) => {
   const [innerStatus, setInnerStatus] = useState(stepsMap.get(status));
+  const { id: userId } = useParams();
   const { confirm } = Modal;
   const selcetChange = (e: any) => {
     setInnerStatus(e);
   };
+
+  // 更改状态;
+  const confirmChangeStatus = useCallback(() => {
+    if (innerStatus !== undefined) {
+      console.log(innerStatus, stepsMap.get(status));
+      // 如果管理员想要直接更改为面试中，报错处理
+      if (innerStatus === 5 && stepsMap.get(status) !== 4) {
+        message.error('只能从排队中更改为面试中');
+        return;
+      }
+
+      setUserStatus(id, innerStatus).then((res) => {
+        if (res.code === 200) {
+          message.success('修改状态成功');
+          changeStatusFn(stepsMapReverse.get(innerStatus) as string);
+          innerStatus === 5 &&
+            pushInterview(Number(userId)).then((res) => {
+              if (res.code !== 200) {
+                message.error('发送消息失败，需要人工提醒');
+                console.log(res);
+              }
+            });
+        } else message.error(res.message);
+      });
+    }
+  }, [innerStatus]);
   const showConfirm = () => {
     confirm({
       title: '你确定要切换状态吗？',
@@ -81,14 +117,7 @@ const DetailStatus: FC<IProps> = ({ status, changeStatusFn, id }) => {
       )}`,
       icon: <ExclamationCircleFilled />,
       onOk() {
-        console.log('更改');
-        innerStatus !== undefined &&
-          setUserStatus(id, innerStatus).then((res) => {
-            if (res.code === 200) {
-              message.success('修改状态成功');
-              changeStatusFn(stepsMapReverse.get(innerStatus) as string);
-            }
-          });
+        confirmChangeStatus();
       },
       onCancel() {
         console.log('Cancel');

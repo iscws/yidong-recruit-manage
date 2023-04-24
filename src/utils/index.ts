@@ -29,3 +29,12 @@ export function formatDate(dateObj: Date) {
 
   return `${year}-${month}-${date}`;
 }
+
+// 翻转map数组的key和value
+export function reverseMap<K, V>(map: Map<K, V>): Map<V, K> {
+  const reverse = new Map<V, K>();
+  for (const [key, value] of map) {
+    reverse.set(value, key);
+  }
+  return reverse;
+}
