@@ -14,15 +14,28 @@ const Home: React.FC<basicHomeProps> = () => {
   return (
     <HomeWrapper>
       <Layout style={{ minHeight: '100vh' }}>
-        <Sider className="sliderArea">
-          <div className="logo-area">
-            <img src={require('@/assets/img/logo.png')} className="logo" />
-          </div>
+        <Sider
+          className="sliderArea"
+          breakpoint="lg"
+          collapsedWidth="0"
+          onBreakpoint={(broken) => {
+            console.log(broken);
+          }}
+          onCollapse={(collapsed, type) => {
+            console.log(collapsed, type);
+          }}
+        >
           <HomeMenu />
         </Sider>
+        {/* 设定一个假的sider用于占位 */}
+        <Sider
+          className="sliderFake"
+          breakpoint="lg"
+          collapsedWidth="0"
+        ></Sider>
         <Layout className="site-layout">
           <Content>
-            <div style={{ margin: '20px 20px 0 220px' }}>
+            <div style={{ margin: '20px' }}>
               <Suspense fallback="loading">
                 <Outlet />
               </Suspense>

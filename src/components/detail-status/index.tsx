@@ -32,7 +32,8 @@ const statusOptions = [
   },
   {
     value: 5,
-    label: '面试中'
+    label: '面试中',
+    disabled: true
   },
   {
     value: 6,
