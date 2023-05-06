@@ -14,17 +14,7 @@ const Home: React.FC<basicHomeProps> = () => {
   return (
     <HomeWrapper>
       <Layout style={{ minHeight: '100vh' }}>
-        <Sider
-          className="sliderArea"
-          breakpoint="lg"
-          collapsedWidth="0"
-          onBreakpoint={(broken) => {
-            console.log(broken);
-          }}
-          onCollapse={(collapsed, type) => {
-            console.log(collapsed, type);
-          }}
-        >
+        <Sider className="sliderArea" breakpoint="lg" collapsedWidth="0">
           <HomeMenu />
         </Sider>
         {/* 设定一个假的sider用于占位 */}

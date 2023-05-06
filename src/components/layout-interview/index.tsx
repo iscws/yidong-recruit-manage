@@ -79,7 +79,7 @@ const LayoutInter: FC<LayoutInterProps> = () => {
     if (interviewTimeId !== undefined) {
       const timer = setInterval(() => {
         fetchList(interviewTimeId, false);
-      }, 4000);
+      }, 1000);
       return () => {
         clearInterval(timer);
       };
@@ -128,6 +128,8 @@ const LayoutInter: FC<LayoutInterProps> = () => {
     // 如果此时排队队列没人则刷新数据然后直接返回
     if (queueList.length === 0) {
       fetchList(interviewTimeId);
+      message.warning('现在无人排队');
+
       return;
     }
 

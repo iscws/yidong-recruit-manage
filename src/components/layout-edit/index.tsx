@@ -21,6 +21,7 @@ const LayoutEdit: FC<LayoutEditProps> = () => {
   const [infoData, setInfoData] = useState<interviewTime[]>([]);
   const [preTime, setPreTime] = useState(0);
   const params = useParams();
+
   // 新增面试时间
   const addTime = useCallback(() => {
     const date = new Date();
@@ -52,15 +53,23 @@ const LayoutEdit: FC<LayoutEditProps> = () => {
     });
   }, 200);
 
-  // 获取面试数据
-  useEffect(() => {
+  // 获取面试时间内容
+  const fetchInterViewTime = () => {
     getInterviewTimeDirec(Number(params.direction)).then((res) => {
       setInfoData(res.data);
     });
+  };
 
+  // 获取面试时间
+  const fetchPreRecruitTime = () => {
     getPreRecruitTime().then((res) => {
       res.code === 200 && setPreTime(res.data);
     });
+  };
+  // 获取面试数据
+  useEffect(() => {
+    fetchInterViewTime();
+    fetchPreRecruitTime();
   }, [params]);
 
   return (
@@ -90,7 +99,13 @@ const LayoutEdit: FC<LayoutEditProps> = () => {
       <div className="items-area">
         {infoData.length !== 0 ? (
           infoData.map((item) => {
-            return <InterviewItem infoData={item} key={item.id} />;
+            return (
+              <InterviewItem
+                infoData={item}
+                key={item.id}
+                fetchData={fetchInterViewTime}
+              />
+            );
           })
         ) : (
           <div className="emptyArea">

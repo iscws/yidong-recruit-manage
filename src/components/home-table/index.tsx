@@ -4,6 +4,7 @@ import { userEnrollType } from '@/type';
 import { Table, Button } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useNavigate } from 'react-router-dom';
+import { HomeTableWrapper } from './style';
 
 interface IProps {
   children?: ReactNode;
@@ -70,16 +71,18 @@ const HomeTable: FC<IProps> = (props) => {
     }
   ];
   return (
-    <>
-      <Table
-        columns={columns}
-        dataSource={props.infoData}
-        rowKey="id"
-        showHeader={showHeader}
-        loading={props?.loading}
-        pagination={false}
-      />
-    </>
+    <HomeTableWrapper>
+      <div className="table-area">
+        <Table
+          columns={columns}
+          dataSource={props.infoData}
+          rowKey="id"
+          showHeader={showHeader}
+          loading={props?.loading}
+          pagination={false}
+        />
+      </div>
+    </HomeTableWrapper>
   );
 };
 

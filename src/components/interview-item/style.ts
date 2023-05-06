@@ -1,8 +1,11 @@
 import styled from 'styled-components';
-
+// interface itemStyleType {
+//   width: number;
+// }
 export const ItemWrapper = styled.div`
-  width: 33.3%;
-  padding: 15px;
+  /* width: 33%; */
+  margin-bottom: 15px;
+  min-width: 300px;
   .inner {
     position: relative;
     padding: 20px;

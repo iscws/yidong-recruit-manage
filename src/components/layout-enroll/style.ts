@@ -5,9 +5,9 @@ export const EnrollWrapper = styled.div`
   .area {
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
     /* align-items: center; */
-    height: 30px;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
     .search-form {
       display: flex;
 

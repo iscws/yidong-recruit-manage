@@ -46,3 +46,15 @@ export interface interviewTime {
 export interface searchType {
   username: string;
 }
+
+// 面试时间
+export interface itemConfigType {
+  innerData: interviewTime;
+  isAppoint: boolean;
+  isDefault: boolean;
+}
+
+// 定义窗口大小的接口类型
+export interface WindowSize {
+  width: number;
+}
