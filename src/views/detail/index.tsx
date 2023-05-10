@@ -62,9 +62,9 @@ const Detail: FC<DetailProps> = () => {
       <div className="basic-info">
         <Descriptions
           title="基本信息"
-          layout="vertical"
+          // layout="vertical"
           bordered={true}
-          column={2}
+          column={1}
         >
           <Descriptions.Item label="姓名">
             {basicInfo?.username}
@@ -86,6 +86,9 @@ const Detail: FC<DetailProps> = () => {
               <Radio value={2}>后端</Radio>
             </Radio.Group>
           </Descriptions.Item>
+        </Descriptions>
+
+        <Descriptions bordered style={{ marginTop: '15px' }}>
           <Descriptions.Item label="自我介绍">
             {basicInfo?.introduction}
           </Descriptions.Item>

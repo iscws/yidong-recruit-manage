@@ -4,7 +4,7 @@ import styled from 'styled-components';
 // }
 export const ItemWrapper = styled.div`
   /* width: 33%; */
-  margin-bottom: 15px;
+  margin: 0 10px 15px 0;
   min-width: 300px;
   .inner {
     position: relative;

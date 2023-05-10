@@ -4,11 +4,10 @@ export const EditWrapper = styled.div`
   .items-area {
     position: relative;
     display: flex;
-    justify-content: space-between;
     flex-wrap: wrap;
     flex: 1;
     width: 100%;
-    padding: 20px;
+    padding: 20px 10px;
   }
   .items-header {
     display: flex;

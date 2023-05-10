@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const DetailWrapper = styled.div`
   width: 1200px;
   min-height: 400px;
-  max-height: 1200px;
+  max-height: 2000px;
   margin: 0 auto;
   padding: 20px;
   box-sizing: border-box;
@@ -21,7 +21,7 @@ export const DetailWrapper = styled.div`
     width: 60%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     /* height: 100vh; */
     margin-left: 20px;
     border-radius: 10px;
