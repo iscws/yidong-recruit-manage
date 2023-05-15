@@ -10,7 +10,7 @@ export const DetailWrapper = styled.div`
   /* background-color: #fff; */
   display: flex;
   .basic-info {
-    width: 35%;
+    width: 40%;
     padding: 20px 30px;
     background-color: #fff;
     box-shadow: 0 0 8px 1px #eeeeee;
@@ -18,7 +18,7 @@ export const DetailWrapper = styled.div`
   }
   .edit-info {
     position: relative;
-    width: 60%;
+    width: 45%;
     display: flex;
     flex-direction: column;
     /* justify-content: space-between; */
@@ -35,5 +35,11 @@ export const DetailWrapper = styled.div`
       align-items: center;
       margin-bottom: 24px;
     }
+  }
+
+  /* 对基本信息的内置样式进行修改 */
+  .ant-descriptions-item-label {
+    width: 120px;
+    text-align: center !important;
   }
 `;

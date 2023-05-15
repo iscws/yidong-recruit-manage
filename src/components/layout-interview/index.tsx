@@ -84,7 +84,6 @@ const LayoutInter: FC<LayoutInterProps> = () => {
         clearInterval(timer);
       };
     }
-    // console.log('触发轮询了', interviewTimeId);
   }, [interviewTimeId]);
 
   /**

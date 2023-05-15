@@ -31,10 +31,10 @@ const LayoutEdit: FC<LayoutEditProps> = () => {
         id: date.getTime(),
         startTime: date.toLocaleString(),
         endTime: date.toLocaleString(),
-        quota: '',
+        quota: 0,
         location: '',
         spareQuota: 0,
-        isdefalut: true,
+        created: false,
         direction: Number(params.direction)
       }
     ]);
@@ -103,7 +103,7 @@ const LayoutEdit: FC<LayoutEditProps> = () => {
               <InterviewItem
                 infoData={item}
                 key={item.id}
-                fetchData={fetchInterViewTime}
+                // fetchData={fetchInterViewTime}
               />
             );
           })

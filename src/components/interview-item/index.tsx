@@ -26,20 +26,22 @@ import { useParams } from 'react-router-dom';
 interface IProps {
   infoData: interviewTime;
   children?: ReactNode;
-  fetchData: () => void;
+  // fetchData: () => void;
 }
 
-const InterviewItem: FC<IProps> = ({ infoData, fetchData }) => {
+const InterviewItem: FC<IProps> = ({ infoData }) => {
   const params = useParams();
   const [itemConfig, setItemConfig] = useState<itemConfigType>({
     innerData: infoData,
     isAppoint: false,
-    isDefault: infoData.isdefalut ?? false
+    created: infoData.created ?? true,
+    isDelete: false
   });
+  const [restQuota, setRestQuota] = useState<number>(infoData.spareQuota ?? 0);
 
   // 删除面试时间
   const deleteItem = async () => {
-    if (!itemConfig.isDefault) {
+    if (itemConfig.created) {
       const res = await deleteInterviewTime(infoData.id as number);
       if (res.code !== 200) {
         message.error(res.message);
@@ -47,7 +49,8 @@ const InterviewItem: FC<IProps> = ({ infoData, fetchData }) => {
       }
     }
     message.success('删除成功');
-    fetchData();
+    // fetchData();
+    setItemConfig({ ...itemConfig, isDelete: true });
   };
   const formSubmit = (value: any) => {
     const submitValue: interviewTime = {
@@ -65,12 +68,13 @@ const InterviewItem: FC<IProps> = ({ infoData, fetchData }) => {
         value['endTime'].format('HH:mm:ss')
     };
 
-    if (itemConfig.isDefault) {
+    if (!itemConfig.created) {
       addNewInterview(submitValue).then((res) => {
         if (res.code === 200) {
           infoData.id = res.data;
           message.success('添加成功');
-          fetchData();
+          setItemConfig({ ...itemConfig, created: true });
+          // fetchData();
         } else {
           message.error(res.message);
         }
@@ -79,7 +83,7 @@ const InterviewItem: FC<IProps> = ({ infoData, fetchData }) => {
       updateInterviewInfo(submitValue).then((res) => {
         if (res.code === 200) {
           message.success(res.message);
-          fetchData();
+          // fetchData();
         } else {
           message.error(res.message);
         }
@@ -87,9 +91,22 @@ const InterviewItem: FC<IProps> = ({ infoData, fetchData }) => {
     }
   };
 
+  const restQuotaInputChange = (value: Partial<interviewTime>) => {
+    if (
+      value.quota &&
+      infoData.quota !== undefined &&
+      infoData.spareQuota !== undefined
+    ) {
+      const rest = Number(infoData.quota) - infoData.spareQuota;
+      console.log('已报名人数：' + rest);
+      console.log('最终剩余人数：' + (value.quota - rest));
+
+      setRestQuota(value.quota - rest);
+    }
+  };
   useEffect(() => {
     // 查询当前时间是否能被更改
-    !itemConfig.isDefault &&
+    itemConfig.created &&
       getAppointSec(infoData.id as number).then((res) => {
         setItemConfig({ ...itemConfig, isAppoint: !res.data });
       });
@@ -98,10 +115,14 @@ const InterviewItem: FC<IProps> = ({ infoData, fetchData }) => {
   useEffect(() => {
     setItemConfig({ ...itemConfig, innerData: infoData });
   }, [infoData]);
-  return (
+  return itemConfig.isDelete ? null : (
     <ItemWrapper>
       <div className="inner">
-        <Form name="interviewForm" onFinish={formSubmit}>
+        <Form
+          name="interviewForm"
+          onFinish={formSubmit}
+          onValuesChange={restQuotaInputChange}
+        >
           <Form.Item
             rules={[{ required: true, message: '请填写日期' }]}
             name="date"
@@ -159,13 +180,10 @@ const InterviewItem: FC<IProps> = ({ infoData, fetchData }) => {
           <Form.Item>
             <div className="btnArea">
               <Button type="primary" htmlType="submit">
-                {itemConfig.isDefault ? '确定新建' : '更改'}
+                {itemConfig.created ? '更改' : '确定新建'}
               </Button>
 
-              <Popover
-                content={'剩余名额：' + itemConfig.innerData.spareQuota}
-                trigger={'click'}
-              >
+              <Popover content={'剩余名额：' + restQuota} trigger={'click'}>
                 <Button>查看更多</Button>
               </Popover>
             </div>

@@ -35,10 +35,10 @@ export interface interviewTime {
   id?: number | string;
   startTime: string;
   endTime: string;
-  quota?: string;
+  quota?: number;
   location: string;
   spareQuota?: number;
-  isdefalut?: boolean;
+  created?: boolean;
   direction?: number;
 }
 
@@ -51,7 +51,8 @@ export interface searchType {
 export interface itemConfigType {
   innerData: interviewTime;
   isAppoint: boolean;
-  isDefault: boolean;
+  created: boolean;
+  isDelete: boolean;
 }
 
 // 定义窗口大小的接口类型
